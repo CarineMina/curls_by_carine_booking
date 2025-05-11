@@ -26,20 +26,21 @@
         }
         
         header {
-            background: var(--primary);
-            color: var(--secondary);
-            text-align: center;
-            padding: 0;
-            height: 120px;
-            
-            border-bottom: 3px solid var(--secondary);
-        }
-        
-        .logo {
-            max-width: 300px;
-            width: auto;
-            margin-bottom: 300px;
-        }
+        header {
+    background: var(--primary);
+    padding: 0; /* إزالة البادينغ الداخلي */
+    height: 120px; /* اضبط الارتفاع كما تفضلين (جرب 150px أو 200px إذا أردت أكبر) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 3px solid var(--secondary);
+}
+
+.logo {
+    height: 90%; /* سيأخذ 90% من ارتفاع الهيدر (يمكنك تغييرها لـ 100% إذا أردت) */
+    width: auto; /* للحفاظ على نسبة العرض إلى الارتفاع */
+    max-width: 90%; /* لمنع تجاوز الحدود إذا كانت الصورة عريضة */
+}
         
         .container {
             width: 90%;
