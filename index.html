@@ -24,20 +24,18 @@
             margin: 0;
             padding: 0;
         }
-        header{
+        
+        header {
             background: var(--primary);
             color: var(--secondary);
             text-align: center;
-            padding: 0;
-            height: 120px;
-            
+            padding: 20px;
             border-bottom: 3px solid var(--secondary);
         }
         
         .logo {
-            max-width: 300px;
-            width: auto;
-            margin-bottom: 300px;
+            max-width: 150px;
+            margin-bottom: 10px;
         }
         
         .container {
@@ -228,9 +226,8 @@
 </head>
 <body>
     <header>
-        <img src="Curls_by_Carine_Logo_Transparent.png" alt="Curls by Carine" class="logo">
-    
-    </header>
+  <img src="https://drive.google.com/uc?id=1-D2sJ4vz9u6qpCVgfKbEbD-XfvOvcvlz" alt="Curls by Carine Logo" style="width: 150px;">
+</header>
 
     <div class="container">
         <!-- Home Page -->
@@ -449,7 +446,7 @@
         // Select service
         function selectService(element, name, price) {
             // Check if selecting color without styling
-            if (name.includes('Color') || name.includes('Streaks') || name.includes('Sections')) {
+            if (name.includes('Color') || name.includes('Streaks') || name.includes('Sections') || name.includes('Ends')) {
                 const hasStyling = booking.services.some(s => 
                     s.name.includes('Hair') || s.name.includes('Cut')
                 ) || booking.hairstyle;
