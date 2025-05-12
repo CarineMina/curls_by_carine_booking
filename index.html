@@ -324,42 +324,27 @@
                     </button>
                 </div>
                 
-                <!-- Step 2: Select Date/Time -->
- 
+                <!-- Step 2: Customer Info -->
                 <div id="step2" class="hidden">
-                    <h3>Select Date & Time</h3>
-                    <label>Date:</label>
-                    <input type="date" id="appointment-date" required min="">
-                    
-                    <label>Time:</label>
-                    <div class="time-slots" id="time-slots">
-                        <div class="time-slot" onclick="selectTime(this, '10:00 AM')">10:00 AM</div>
-                        <div class="time-slot" onclick="selectTime(this, '12:00 PM')">12:00 PM</div>
-                        <div class="time-slot" onclick="selectTime(this, '2:00 PM')">2:00 PM</div>
-                        <div class="time-slot" onclick="selectTime(this, '4:00 PM')">4:00 PM</div>
-                    </div>
-                    <h3>Select Your Appointment</h3>
-                    
-
-
-                    <button class="btn" onclick="prevStep(1)">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </button>
-                    <button class="btn" onclick="nextStep(3)">
-                        <i class="fas fa-arrow-right"></i> Next
-                    </button>
-                </div>
-                
-                <!-- Step 3: Customer Info -->
-                <div id="step3" class="hidden">
                     <form action="https://formsubmit.co/curls.by.carine1@gmail.com" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="_subject" value="📅 New Booking - Curls by Carine">
                         <input type="hidden" name="_autoresponse" value="Thank you for your booking! We'll contact you soon to confirm your appointment. 💇‍♀️">
                         <input type="hidden" name="_template" value="table">
                         <input type="hidden" name="services" id="form-services">
-                        <input type="hidden" name="date" id="form-date">
-                        <input type="hidden" name="time" id="form-time">
                         <input type="hidden" name="total" id="form-total">
+                        
+                        <h3>Select Date & Time</h3>
+                        <label>Date:</label>
+                        <input type="date" id="appointment-date" name="date" required min="">
+                        
+                        <label>Time:</label>
+                        <div class="time-slots" id="time-slots">
+                            <div class="time-slot" onclick="selectTime(this, '10:00 AM')">10:00 AM</div>
+                            <div class="time-slot" onclick="selectTime(this, '12:00 PM')">12:00 PM</div>
+                            <div class="time-slot" onclick="selectTime(this, '2:00 PM')">2:00 PM</div>
+                            <div class="time-slot" onclick="selectTime(this, '4:00 PM')">4:00 PM</div>
+                        </div>
+                        <input type="hidden" id="form-time" name="time">
                         
                         <h3>Your Information</h3>
                         <label>Full Name:</label>
@@ -400,7 +385,7 @@
                             <!-- Inspiration photos will be displayed here -->
                         </div>
                         
-                        <button type="button" class="btn" onclick="prevStep(2)">
+                        <button type="button" class="btn" onclick="prevStep(1)">
                             <i class="fas fa-arrow-left"></i> Back
                         </button>
                         <button type="submit" class="btn">
@@ -565,6 +550,7 @@
             });
             element.classList.add('selected');
             booking.time = time;
+            document.getElementById('form-time').value = time;
         }
 
         // Booking steps navigation
@@ -604,30 +590,14 @@
                 
                 // Update inspiration gallery preview
                 updateInspirationGallery();
-            }
-            
-            if (step === 3) {
-                booking.date = document.getElementById('appointment-date').value;
-                if (!booking.date) {
-                    alert('Please select a date');
-                    return;
-                }
-                if (!booking.time) {
-                    alert('Please select a time');
-                    return;
-                }
                 
                 // Update hidden form fields
-                document.getElementById('form-date').value = booking.date;
-                document.getElementById('form-time').value = booking.time;
                 document.getElementById('form-services').value = JSON.stringify(booking.services);
-                
                 updateTotal();
             }
             
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.add('hidden');
-            document.getElementById('step3').classList.add('hidden');
             document.getElementById('confirmation').classList.add('hidden');
             document.getElementById('step' + step).classList.remove('hidden');
         }
@@ -635,7 +605,6 @@
         function prevStep(step) {
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.add('hidden');
-            document.getElementById('step3').classList.add('hidden');
             document.getElementById('confirmation').classList.add('hidden');
             document.getElementById('step' + step).classList.remove('hidden');
         }
@@ -718,7 +687,6 @@
             booking = { services: [], time: null, date: null, hairstyle: null, inspirationPhotos: [] };
             document.getElementById('step1').classList.remove('hidden');
             document.getElementById('step2').classList.add('hidden');
-            document.getElementById('step3').classList.add('hidden');
             document.getElementById('confirmation').classList.add('hidden');
             document.getElementById('dry-cut-upload').classList.add('hidden');
             document.getElementById('hairstyle-upload').classList.add('hidden');
@@ -735,6 +703,11 @@
             
             // Listen for Afro hair selection change
             document.getElementById('afro-hair').addEventListener('change', updateTotal);
+            
+            // Listen for date change
+            document.getElementById('appointment-date').addEventListener('change', function() {
+                booking.date = this.value;
+            });
         };
     </script>
 </body>
