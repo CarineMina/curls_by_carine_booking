@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+    <script>
+// كود التحقق من المدير
+const adminPassword = "carine123"; // غيريها لكلمة سر خاصة
+const enteredPass = prompt("Please enter admin password:");
+
+if (enteredPass !== adminPassword) {
+    window.location.href = "index.html"; // إعادة التوجيه للصفحة الرئيسية
+}
+    </script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
