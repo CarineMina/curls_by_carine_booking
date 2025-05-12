@@ -3,80 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Curls by Carine - Admin Panel</title>
+    <title>404 Not Found</title>
     <meta name="robots" content="noindex, nofollow">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #000;
-            --secondary: #D4AF37;
-            --light: #f8f5f0;
-            --white: #fff;
-            --gray: #eee;
-            --dark-gray: #777;
+        body { 
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
         }
-        
-        body {
-            font-family: 'Poppins', Arial, sans-serif;
-            background: var(--light);
-            color: var(--primary);
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* ... (keep all your existing CSS styles here) ... */
     </style>
     <script>
-        // Enhanced Password Protection
-        const ADMIN_PASSWORD = "CurlsAdmin@2024"; // CHANGE THIS TO YOUR SECURE PASSWORD
-        const MAX_ATTEMPTS = 3;
-        let attempts = 0;
+        // SUPER SECURE ACCESS CONTROL
+        const SECRET_HASH = "a1b2c3d4e5"; // Change this to any random string
+        const ADMIN_KEY = "CurlsSecure@2024"; // Change to your password
         
-        function verifyAccess() {
-            while (attempts < MAX_ATTEMPTS) {
-                const enteredPass = prompt("🔒 Admin Access Required\nPlease enter the admin password:");
-                
-                if (enteredPass === ADMIN_PASSWORD) {
-                    document.body.style.display = 'block';
-                    return true;
-                } 
-                
-                attempts++;
-                alert(`Incorrect password! (Attempt ${attempts}/${MAX_ATTEMPTS})`);
+        function checkAccess() {
+            const urlHash = new URLSearchParams(window.location.search).get('key');
+            if (urlHash === SECRET_HASH) {
+                const enteredPass = prompt("ADMIN VERIFICATION:\nEnter your master password:");
+                if (enteredPass === ADMIN_KEY) {
+                    loadAdminPanel();
+                    return;
+                }
             }
-            
-            // Redirect after failed attempts
-            alert("Access denied. Redirecting...");
-            window.location.href = "index.html";
-            return false;
+            document.body.innerHTML = '<h1>404 Not Found</h1><p>The page you requested does not exist.</p>';
         }
         
-        // Hide page content until verified
-        document.body.style.display = 'none';
-        window.onload = verifyAccess;
+        function loadAdminPanel() {
+            document.title = "Curls by Carine - Admin Panel";
+            document.body.innerHTML = `
+                <!-- PASTE YOUR ENTIRE ORIGINAL ADMIN PANEL HTML HERE -->
+                <!-- COPY FROM <header> TO END OF <script> TAGS -->
+            `;
+        }
+        
+        window.onload = checkAccess;
     </script>
 </head>
 <body>
-    <!-- YOUR EXISTING ADMIN PANEL HTML CONTENT GOES HERE -->
-    <!-- Keep all your current admin panel HTML -->
-    
-    <script>
-        // Your existing admin panel JavaScript
-        let adminData = {
-            // ... (keep your existing adminData object) ...
-        };
-
-        // ... (keep all your existing admin panel functions) ...
-
-        // Initialize only after password verification
-        if (document.body.style.display !== 'none') {
-            window.onload = function() {
-                loadAdminData();
-                document.getElementById('block-date').min = new Date().toISOString().split('T')[0];
-            };
-        }
-    </script>
+    <!-- This will show 404 error by default -->
 </body>
 </html>
