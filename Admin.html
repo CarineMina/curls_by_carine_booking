@@ -10,37 +10,65 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 50px;
+            background: #f8f5f0;
+            color: #000;
+        }
+        h1 {
+            color: #D4AF37;
         }
     </style>
     <script>
-        // SUPER SECURE ACCESS CONTROL
-        const SECRET_HASH = "a1b2c3d4e5"; // Change this to any random string
-        const ADMIN_KEY = "CurlsSecure@2024"; // Change to your password
+        // Enhanced Security System
+        const SECRET_KEY = "CurlsByCarine@2024"; // Change this to your secret key
+        const ADMIN_PASS = "Admin123!"; // Change this to your admin password
         
-        function checkAccess() {
-            const urlHash = new URLSearchParams(window.location.search).get('key');
-            if (urlHash === SECRET_HASH) {
-                const enteredPass = prompt("ADMIN VERIFICATION:\nEnter your master password:");
-                if (enteredPass === ADMIN_KEY) {
+        function verifyAccess() {
+            // First layer: Secret URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const key = urlParams.get('access');
+            
+            // Second layer: Password prompt
+            if (key === SECRET_KEY) {
+                const pass = prompt("Admin Verification\nEnter your password:");
+                if (pass === ADMIN_PASS) {
                     loadAdminPanel();
                     return;
                 }
+                alert("Access Denied");
             }
-            document.body.innerHTML = '<h1>404 Not Found</h1><p>The page you requested does not exist.</p>';
+            
+            // Show 404 page to unauthorized users
+            document.body.innerHTML = `
+                <h1>404 Not Found</h1>
+                <p>The requested page doesn't exist.</p>
+                <img src="Curls_by_Carine_Logo_Transparent.png" style="width:150px;margin-top:20px;">
+            `;
         }
         
         function loadAdminPanel() {
             document.title = "Curls by Carine - Admin Panel";
             document.body.innerHTML = `
-                <!-- PASTE YOUR ENTIRE ORIGINAL ADMIN PANEL HTML HERE -->
-                <!-- COPY FROM <header> TO END OF <script> TAGS -->
+                <header>
+                    <img src="Curls_by_Carine_Logo_Transparent.png" alt="Curls by Carine Logo" style="width: 150px;">
+                    <h1>Admin Panel</h1>
+                </header>
+
+                <div class="container">
+                    <!-- باقي كود الإدارة الأصلي هنا -->
+                    ${document.querySelector('.container').innerHTML}
+                </div>
+                
+                <script>
+                    // كود الجافاسكريبت الأصلي للإدارة هنا
+                    ${document.querySelector('script').innerText}
+                </script>
             `;
         }
         
-        window.onload = checkAccess;
+        window.onload = verifyAccess;
     </script>
 </head>
 <body>
-    <!-- This will show 404 error by default -->
+    <!-- سيتم استبدال هذا المحتوى تلقائيا -->
 </body>
 </html>
