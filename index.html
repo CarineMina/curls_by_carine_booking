@@ -6,6 +6,583 @@
     <title>Curls by Carine - Booking</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curls by Carine - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000;
+            --secondary: #D4AF37;
+            --light: #f8f5f0;
+            --white: #fff;
+            --gray: #eee;
+            --dark-gray: #777;
+        }
+        
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: var(--light);
+            color: var(--primary);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header {
+            background: var(--primary);
+            color: var(--secondary);
+            text-align: center;
+            padding: 20px;
+            border-bottom: 3px solid var(--secondary);
+        }
+        
+        .logo {
+            max-width: 150px;
+            margin-bottom: 10px;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+            padding: 10px 15px;
+            margin: 5px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+        
+        section {
+            background: var(--white);
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--secondary);
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: var(--secondary);
+        }
+        
+        tr:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 20px;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        
+        .time-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .time-slot {
+            padding: 10px 15px;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .time-slot:hover {
+            transform: scale(1.05);
+        }
+        
+        .time-slot.selected {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+        
+        .tab {
+            overflow: hidden;
+            border: 1px solid var(--secondary);
+            background-color: var(--light);
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+        
+        .tab button:hover {
+            background-color: rgba(212, 175, 55, 0.2);
+        }
+        
+        .tab button.active {
+            background-color: var(--primary);
+            color: var(--secondary);
+        }
+        
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border-top: none;
+        }
+        
+        @media (max-width: 768px) {
+            .btn {
+                display: block;
+                width: 100%;
+                margin: 8px 0;
+            }
+            
+            .time-slots {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="Curls_by_Carine_Logo_Transparent.png" alt="Curls by Carine Logo" style="width: 150px;">
+        <h1>Admin Panel</h1>
+    </header>
+
+    <div class="container">
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'bookings')">Bookings</button>
+            <button class="tablinks" onclick="openTab(event, 'availability')">Availability</button>
+            <button class="tablinks" onclick="openTab(event, 'services')">Services</button>
+        </div>
+
+        <!-- Bookings Tab -->
+        <div id="bookings" class="tabcontent" style="display: block;">
+            <h2>Manage Bookings</h2>
+            <table id="bookings-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Name</th>
+                        <th>Services</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Bookings will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Availability Tab -->
+        <div id="availability" class="tabcontent">
+            <h2>Manage Availability</h2>
+            
+            <h3>Working Days</h3>
+            <div class="time-slots">
+                <label><input type="checkbox" id="mon" checked> Monday</label>
+                <label><input type="checkbox" id="tue" checked> Tuesday</label>
+                <label><input type="checkbox" id="wed" checked> Wednesday</label>
+                <label><input type="checkbox" id="thu" checked> Thursday</label>
+                <label><input type="checkbox" id="fri" checked> Friday</label>
+                <label><input type="checkbox" id="sat" checked> Saturday</label>
+                <label><input type="checkbox" id="sun"> Sunday</label>
+            </div>
+            
+            <h3>Available Time Slots</h3>
+            <div id="time-slots-container" class="time-slots">
+                <!-- Time slots will be loaded here -->
+            </div>
+            <div style="margin-top: 20px;">
+                <input type="time" id="new-slot-time">
+                <button class="btn" onclick="addTimeSlot()"><i class="fas fa-plus"></i> Add Time Slot</button>
+            </div>
+            
+            <h3>Blocked Dates</h3>
+            <div>
+                <input type="date" id="block-date">
+                <button class="btn" onclick="blockDate()"><i class="fas fa-ban"></i> Block Date</button>
+            </div>
+            <div id="blocked-dates-list" style="margin-top: 10px;">
+                <!-- Blocked dates will be listed here -->
+            </div>
+            
+            <button class="btn" onclick="saveAvailability()" style="margin-top: 20px;">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </div>
+
+        <!-- Services Tab -->
+        <div id="services" class="tabcontent">
+            <h2>Manage Services</h2>
+            
+            <h3>Current Services</h3>
+            <table id="services-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Service</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Services will be loaded here -->
+                </tbody>
+            </table>
+            
+            <h3>Add New Service</h3>
+            <div>
+                <label>Category:</label>
+                <select id="service-category">
+                    <option value="Hair Cutting">Hair Cutting</option>
+                    <option value="Hair Styling">Hair Styling</option>
+                    <option value="Hairstyles">Hairstyles</option>
+                    <option value="Temporary Hair Colors">Temporary Hair Colors</option>
+                </select>
+                
+                <label>Service Name:</label>
+                <input type="text" id="service-name" placeholder="e.g. Dry Cut">
+                
+                <label>Price (EGP):</label>
+                <input type="number" id="service-price" placeholder="e.g. 150">
+                
+                <button class="btn" onclick="addService()"><i class="fas fa-plus"></i> Add Service</button>
+            </div>
+            
+            <button class="btn" onclick="saveServices()" style="margin-top: 20px;">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Admin data
+        let adminData = {
+            bookings: [],
+            availability: {
+                workingDays: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+                timeSlots: ['10:00 AM', '12:00 PM', '2:00 PM', '4:00 PM'],
+                blockedDates: []
+            },
+            services: {
+                "Hair Cutting": [
+                    { name: "Dry Cut", price: 150 }
+                ],
+                "Hair Styling": [
+                    { name: "Ear Length Hair", price: 300 },
+                    { name: "Shoulder Length Hair", price: 350 },
+                    { name: "Mid Back Length Hair", price: 400 },
+                    { name: "Long Hair", price: 550 }
+                ],
+                "Hairstyles": [
+                    { name: "Custom Hairstyle", price: 0, note: "200-700 EGP based on complexity" }
+                ],
+                "Temporary Hair Colors": [
+                    { name: "Full Hair Color", price: 220 },
+                    { name: "Ends Only", price: 180 },
+                    { name: "Front/Back Sections", price: 150 },
+                    { name: "Streaks (Highlights)", price: 120 }
+                ]
+            }
+        };
+
+        // Load data from localStorage
+        function loadAdminData() {
+            const savedData = localStorage.getItem('curlsByCarineAdminData');
+            if (savedData) {
+                adminData = JSON.parse(savedData);
+            }
+            renderAll();
+        }
+
+        // Save data to localStorage
+        function saveAdminData() {
+            localStorage.setItem('curlsByCarineAdminData', JSON.stringify(adminData));
+        }
+
+        // Tab functionality
+        function openTab(evt, tabName) {
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            
+            const tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Render bookings table
+        function renderBookings() {
+            const tbody = document.querySelector('#bookings-table tbody');
+            tbody.innerHTML = '';
+            
+            adminData.bookings.forEach(booking => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${booking.date}</td>
+                    <td>${booking.time}</td>
+                    <td>${booking.name}</td>
+                    <td>${booking.services.map(s => s.name).join(', ')}</td>
+                    <td>${booking.total} EGP</td>
+                    <td>
+                        <button class="btn" onclick="deleteBooking('${booking.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Render availability settings
+        function renderAvailability() {
+            // Working days
+            ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].forEach(day => {
+                document.getElementById(day).checked = adminData.availability.workingDays.includes(day);
+            });
+            
+            // Time slots
+            const container = document.getElementById('time-slots-container');
+            container.innerHTML = '';
+            
+            adminData.availability.timeSlots.forEach(slot => {
+                const div = document.createElement('div');
+                div.className = 'time-slot';
+                div.innerHTML = `
+                    ${slot}
+                    <button class="btn" onclick="removeTimeSlot('${slot}')" style="margin-left: 10px; padding: 2px 5px;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+            
+            // Blocked dates
+            const blockedDatesList = document.getElementById('blocked-dates-list');
+            blockedDatesList.innerHTML = '';
+            
+            if (adminData.availability.blockedDates.length === 0) {
+                blockedDatesList.innerHTML = '<p>No dates blocked</p>';
+            } else {
+                adminData.availability.blockedDates.forEach(date => {
+                    const div = document.createElement('div');
+                    div.style.display = 'flex';
+                    div.style.justifyContent = 'space-between';
+                    div.style.alignItems = 'center';
+                    div.style.margin = '5px 0';
+                    div.innerHTML = `
+                        <span>${date}</span>
+                        <button class="btn" onclick="unblockDate('${date}')" style="padding: 2px 5px;">
+                            <i class="fas fa-times"></i> Unblock
+                        </button>
+                    `;
+                    blockedDatesList.appendChild(div);
+                });
+            }
+        }
+
+        // Render services
+        function renderServices() {
+            const tbody = document.querySelector('#services-table tbody');
+            tbody.innerHTML = '';
+            
+            for (const category in adminData.services) {
+                adminData.services[category].forEach(service => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${category}</td>
+                        <td>${service.name}</td>
+                        <td>${service.price === 0 ? service.note : service.price + ' EGP'}</td>
+                        <td>
+                            <button class="btn" onclick="editService('${category}', '${service.name}')" style="padding: 2px 5px;">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn" onclick="deleteService('${category}', '${service.name}')" style="padding: 2px 5px;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // Render all data
+        function renderAll() {
+            renderBookings();
+            renderAvailability();
+            renderServices();
+        }
+
+        // Add time slot
+        function addTimeSlot() {
+            const timeInput = document.getElementById('new-slot-time');
+            const time = formatTime(timeInput.value);
+            
+            if (time && !adminData.availability.timeSlots.includes(time)) {
+                adminData.availability.timeSlots.push(time);
+                saveAdminData();
+                renderAvailability();
+                timeInput.value = '';
+            }
+        }
+
+        // Remove time slot
+        function removeTimeSlot(slot) {
+            adminData.availability.timeSlots = adminData.availability.timeSlots.filter(s => s !== slot);
+            saveAdminData();
+            renderAvailability();
+        }
+
+        // Block date
+        function blockDate() {
+            const dateInput = document.getElementById('block-date');
+            const date = dateInput.value;
+            
+            if (date && !adminData.availability.blockedDates.includes(date)) {
+                adminData.availability.blockedDates.push(date);
+                saveAdminData();
+                renderAvailability();
+                dateInput.value = '';
+            }
+        }
+
+        // Unblock date
+        function unblockDate(date) {
+            adminData.availability.blockedDates = adminData.availability.blockedDates.filter(d => d !== date);
+            saveAdminData();
+            renderAvailability();
+        }
+
+        // Add service
+        function addService() {
+            const category = document.getElementById('service-category').value;
+            const name = document.getElementById('service-name').value.trim();
+            const price = parseInt(document.getElementById('service-price').value);
+            
+            if (name && !isNaN(price)) {
+                if (!adminData.services[category]) {
+                    adminData.services[category] = [];
+                }
+                
+                adminData.services[category].push({ name, price });
+                saveAdminData();
+                renderServices();
+                
+                // Clear inputs
+                document.getElementById('service-name').value = '';
+                document.getElementById('service-price').value = '';
+            }
+        }
+
+        // Edit service (placeholder - would need a modal or separate form)
+        function editService(category, serviceName) {
+            alert(`Editing ${serviceName} in ${category}. This would open an edit form in a real implementation.`);
+        }
+
+        // Delete service
+        function deleteService(category, serviceName) {
+            if (confirm(`Are you sure you want to delete "${serviceName}" from ${category}?`)) {
+                adminData.services[category] = adminData.services[category].filter(s => s.name !== serviceName);
+                saveAdminData();
+                renderServices();
+            }
+        }
+
+        // Delete booking
+        function deleteBooking(bookingId) {
+            if (confirm('Are you sure you want to delete this booking?')) {
+                adminData.bookings = adminData.bookings.filter(b => b.id !== bookingId);
+                saveAdminData();
+                renderBookings();
+            }
+        }
+
+        // Save availability
+        function saveAvailability() {
+            // Update working days
+            adminData.availability.workingDays = [];
+            ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].forEach(day => {
+                if (document.getElementById(day).checked) {
+                    adminData.availability.workingDays.push(day);
+                }
+            });
+            
+            saveAdminData();
+            alert('Availability settings saved!');
+        }
+
+        // Save services
+        function saveServices() {
+            saveAdminData();
+            alert('Services saved!');
+        }
+
+        // Helper function to format time
+        function formatTime(timeString) {
+            if (!timeString) return '';
+            
+            const [hours, minutes] = timeString.split(':');
+            const hourNum = parseInt(hours);
+            const ampm = hourNum >= 12 ? 'PM' : 'AM';
+            const displayHour = hourNum % 12 || 12;
+            
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            loadAdminData();
+            
+            // Set minimum date for blocking dates
+            document.getElementById('block-date').min = new Date().toISOString().split('T')[0];
+        };
+    </script>
     <style>
         :root {
             --primary: #000;
