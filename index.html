@@ -1282,6 +1282,38 @@
                 booking.date = this.value;
             });
         };
+        // Load availability data from admin
+function loadAvailability() {
+    const savedData = localStorage.getItem('curlsByCarineAdminData');
+    if (savedData) {
+        const adminData = JSON.parse(savedData);
+        const timeSlotsContainer = document.getElementById('time-slots');
+        if (timeSlotsContainer) {
+            timeSlotsContainer.innerHTML = '';
+            adminData.availability.timeSlots.forEach(slot => {
+                const div = document.createElement('div');
+                div.className = 'time-slot';
+                div.textContent = slot;
+                div.onclick = function() { selectTime(this, slot) };
+                timeSlotsContainer.appendChild(div);
+            });
+        }
+    }
+}
+
+// Update window.onload function
+window.onload = function() {
+    // ... الكود الأصلي اللي عندك ...
+    loadAvailability(); // أضيفي هذا السطر هنا
+    
+    // تأكدي من وجود هذا الكود الأساسي:
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('appointment-date').min = today;
+    document.getElementById('afro-hair').addEventListener('change', updateTotal);
+    document.getElementById('appointment-date').addEventListener('change', function() {
+        booking.date = this.value;
+    });
+};
     </script>
 </body>
 </html>
