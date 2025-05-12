@@ -34,10 +34,9 @@
                     loadAdminPanel();
                     return;
                 }
-                alert("Access Denied");
             }
             
-            // Show 404 page to unauthorized users
+            // Always show 404 page if not properly authenticated
             document.body.innerHTML = `
                 <h1>404 Not Found</h1>
                 <p>The requested page doesn't exist.</p>
@@ -55,12 +54,10 @@
 
                 <div class="container">
                     <!-- باقي كود الإدارة الأصلي هنا -->
-                    ${document.querySelector('.container').innerHTML}
                 </div>
                 
                 <script>
                     // كود الجافاسكريبت الأصلي للإدارة هنا
-                    ${document.querySelector('script').innerText}
                 </script>
             `;
         }
@@ -70,5 +67,8 @@
 </head>
 <body>
     <!-- سيتم استبدال هذا المحتوى تلقائيا -->
+    <h1>404 Not Found</h1>
+    <p>The requested page doesn't exist.</p>
+    <img src="Curls_by_Carine_Logo_Transparent.png" style="width:150px;margin-top:20px;">
 </body>
 </html>
