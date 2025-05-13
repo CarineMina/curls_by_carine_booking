@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard | Curls by Carine</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <!-- Security Check -->
+    <script>
+        if(localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+        
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <div class="sidebar">
+        <div class="logo">
+            <img src="../images/logo.png" alt="Logo">
+        </div>
+        
+        <nav>
+            <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="#"><i class="fas fa-calendar"></i> Appointments</a>
+            <a href="#"><i class="fas fa-users"></i> Clients</a>
+            <a href="#"><i class="fas fa-box"></i> Products</a>
+            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="stats-cards">
+            <div class="card">
+                <h3>Today's Appointments</h3>
+                <p>15</p>
+            </div>
+            <div class="card">
+                <h3>Total Clients</h3>
+                <p>120</p>
+            </div>
+            <div class="card">
+                <h3>Monthly Revenue</h3>
+                <p>$2,850</p>
+            </div>
+        </div>
+        
+        <div class="recent-orders">
+            <h2>Recent Appointments</h2>
+            <table>
+                <tr>
+                    <th>Client</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>Sarah Johnson</td>
+                    <td>Hair Treatment</td>
+                    <td>May 15, 2024</td>
+                    <td><span class="status completed">Completed</span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script src="assets/admin.js"></script>
+</body>
+</html>
