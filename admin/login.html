@@ -2,122 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login | Curls by Carine</title>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
             background: #f9f5f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            font-family: 'Arial', sans-serif;
         }
-        
-        .login-container {
+        .login-box {
+            width: 400px;
+            margin: 100px auto;
+            padding: 30px;
             background: white;
-            padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
             text-align: center;
         }
-        
         .logo {
             width: 150px;
-            margin-bottom: 30px;
-        }
-        
-        h2 {
-            color: #3a2c1a;
             margin-bottom: 20px;
         }
-        
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #5a4a3a;
-            font-weight: 500;
-        }
-        
         input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px;
+            margin: 10px 0;
             border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
+            border-radius: 5px;
         }
-        
         button {
             background: #D4AF37;
             color: white;
             border: none;
             padding: 12px 30px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
+            font-size: 16px;
             width: 100%;
-        }
-        
-        button:hover {
-            background: #c19b2c;
-        }
-        
-        .error {
-            color: #dc3545;
-            margin-top: 10px;
-            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <img src="../public/images/Curls_by_Carine_Logo_Transparent.png" alt="Logo" class="logo">
+    <div class="login-box">
+        <img src="../images/logo.png" alt="Logo" class="logo">
         <h2>Admin Login</h2>
         
         <form id="loginForm">
-            <div class="input-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" required>
-            </div>
-            
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" required>
-            </div>
-            
-            <div id="errorMessage" class="error"></div>
-            
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
             <button type="submit">Login</button>
         </form>
     </div>
 
     <script>
-        // Simple client-side validation
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').onsubmit = function(e) {
             e.preventDefault();
+            
+            // Change these to your credentials
+            const USERNAME = "admin";
+            const PASSWORD = "Carine@2024";
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const errorElement = document.getElementById('errorMessage');
             
-            // Replace with your actual credentials or server-side validation
-            if(username === "admin" && password === "SecurePass123!") {
-                // Redirect to dashboard (in real implementation, use proper authentication)
-                window.location.href = "dashboard.html";
+            if(username === USERNAME && password === PASSWORD) {
+                localStorage.setItem('isLoggedIn', 'true');
+                window.location.href = 'dashboard.html';
             } else {
-                errorElement.textContent = "Invalid username or password";
+                alert('Invalid credentials!');
             }
-        });
+        };
     </script>
 </body>
 </html>
