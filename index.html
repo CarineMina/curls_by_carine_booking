@@ -1423,7 +1423,109 @@
         };
 
     </script>
+<!-- كود الادمين -->
+<script>
+    // نظام تسجيل دخول الإدمين
+    const ADMIN_PASSWORD = "CurlsByCarine123"; // غيّري هذه الكلمة
+    let isAdminLoggedIn = false;
 
+    function showAdminLogin() {
+        const password = prompt("أدخل كلمة مرور الإدمين:");
+        if (password === ADMIN_PASSWORD) {
+            isAdminLoggedIn = true;
+            showAdminPanel();
+        } else {
+            alert("كلمة المرور غير صحيحة");
+        }
+    }
+
+    function showAdminPanel() {
+        if (!isAdminLoggedIn) return;
+        
+        const adminHTML = `
+            <div id="admin-panel" style="position:fixed; top:20px; right:20px; z-index:1000; background:white; padding:20px; border:2px solid #D4AF37; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.2); max-width:400px;">
+                <h2 style="color:#D4AF37; margin-top:0;">لوحة التحكم</h2>
+                <h3>إدارة المواعيد</h3>
+                <div style="margin-bottom:15px;">
+                    <label>تاريخ جديد:</label>
+                    <input type="date" id="new-admin-date" style="width:100%; padding:8px; margin:5px 0;">
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label>مواعيد جديدة (افصل بينها بفاصلة):</label>
+                    <input type="text" id="new-admin-times" placeholder="2:00 PM, 4:00 PM" style="width:100%; padding:8px; margin:5px 0;">
+                </div>
+                <button onclick="addAdminTimes()" class="btn" style="margin-right:5px;">
+                    <i class="fas fa-plus"></i> إضافة مواعيد
+                </button>
+                <button onclick="document.getElementById('admin-panel').remove()" class="btn">
+                    <i class="fas fa-times"></i> إغلاق
+                </button>
+                <hr style="margin:15px 0; border-color:#D4AF37;">
+                <h3>المواعيد المتاحة حالياً</h3>
+                <div id="current-times-list" style="max-height:200px; overflow-y:auto; margin-bottom:15px;"></div>
+                <button onclick="clearAllTimes()" class="btn" style="background:#ff4444; border-color:#ff4444;">
+                    <i class="fas fa-trash"></i> مسح جميع المواعيد
+                </button>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', adminHTML);
+        loadCurrentTimes();
+    }
+
+    function loadCurrentTimes() {
+        const timesList = document.getElementById('current-times-list');
+        timesList.innerHTML = '';
+        const currentTimes = ['10:00 AM', '12:00 PM', '2:00 PM', '4:00 PM'];
+        
+        currentTimes.forEach(time => {
+            timesList.innerHTML += `
+                <div style="padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
+                    <span>${time}</span>
+                    <button onclick="removeAdminTime('${time}')" style="background:none; border:none; color:red; cursor:pointer;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+        });
+    }
+
+    function addAdminTimes() {
+        const date = document.getElementById('new-admin-date').value;
+        const timesInput = document.getElementById('new-admin-times').value;
+        
+        if (!date || !timesInput) {
+            alert("الرجاء إدخال التاريخ والمواعيد");
+            return;
+        }
+        
+        const newTimes = timesInput.split(',').map(t => t.trim()).filter(t => t);
+        alert(`تمت إضافة ${newTimes.length} مواعيد جديدة لليوم ${date}`);
+        loadCurrentTimes();
+        document.getElementById('new-admin-date').value = '';
+        document.getElementById('new-admin-times').value = '';
+    }
+
+    function removeAdminTime(time) {
+        if (confirm(`هل تريدين حذف الموعد ${time}؟`)) {
+            alert(`تم حذف الموعد ${time}`);
+            loadCurrentTimes();
+        }
+    }
+
+    function clearAllTimes() {
+        if (confirm("هل أنتِ متأكدة من حذف جميع المواعيد؟")) {
+            alert("تم حذف جميع المواعيد");
+            loadCurrentTimes();
+        }
+    }
+</script>
+
+<!-- زر الدخول للادمين -->
+<div style="position:fixed; bottom:10px; right:10px; z-index:999;">
+    <button onclick="showAdminLogin()" style="background:#000; color:#D4AF37; border:2px solid #D4AF37; border-radius:50%; width:50px; height:50px; cursor:pointer;">
+        <i class="fas fa-lock"></i>
+    </button>
+</div>
 </body>
 
     </html>
