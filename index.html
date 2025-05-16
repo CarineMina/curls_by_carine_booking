@@ -52,16 +52,16 @@
             display: inline-block;
             background: var(--primary);
             color: var(--secondary);
-            border: 2px solid var(--secondary);
-            padding: 10px 15px;
-            margin: 5px;
+            border: 1px solid var(--secondary);
+            padding: 6px 10px;
+            margin: 3px;
             text-align: center;
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 4px;
             transition: all 0.3s ease;
-            font-size: 0.9em;
+            font-size: 0.8em;
         }
         
         .btn:hover {
@@ -92,9 +92,9 @@
         }
         
         .btn-sm {
-            padding: 5px 10px;
-            font-size: 0.8em;
-            margin: 2px;
+            padding: 3px 6px;
+            font-size: 0.7em;
+            margin: 1px;
         }
         
         section {
@@ -151,11 +151,12 @@
         }
         
         .time-slot {
-            padding: 10px 15px;
+            padding: 6px 10px;
             border: 1px solid var(--secondary);
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.2s ease;
+            font-size: 0.8em;
         }
         
         .time-slot:hover {
@@ -311,13 +312,13 @@
         }
         
         .admin-tab-btn {
-            padding: 8px 12px;
+            padding: 6px 10px;
             background: var(--primary);
             color: var(--secondary);
             border: 1px solid var(--secondary);
             border-radius: 5px;
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 0.8em;
             transition: all 0.2s ease;
         }
         
@@ -459,6 +460,12 @@
             <div class="service" onclick="selectHairstyle(this, 'Custom Hairstyle', 0)">
                 Custom Hairstyle <span class="price">200-700 EGP</span>
             </div>
+            
+            <!-- 
+            لإعادة قسم Temporary Hair Colors:
+            1. أزل التعليق عن الكود التالي (من <h3> إلى </div> الأخير)
+            2. تأكد من إزالة علامات التعليق <!-- و --
+            -->
             <!--
             <h3>Temporary Hair Colors</h3>
             <div class="note">
@@ -475,7 +482,7 @@
             </div>
             <div class="service" onclick="selectService(this, 'Streaks (Highlights)', 120)">
                 Streaks (Highlights) <span class="price">120 EGP</span>
-            </div> 
+            </div>
             -->
             
             <a href="#" class="btn" onclick="showSection('home')">
@@ -823,6 +830,10 @@
                 </div>
             `;
             
+            // لإعادة عرض خدمات Temporary Hair Colors في صفحة الحجز:
+            // 1. أزل التعليق عن الكود التالي
+            // 2. تأكد من إزالة علامات التعليق /* و */
+            /*
             // Temporary Hair Colors
             container.innerHTML += '<h4>Temporary Hair Colors</h4>';
             container.innerHTML += `
@@ -844,6 +855,7 @@
                     Streaks (Highlights) <span class="price">120 EGP</span>
                 </div>
             `;
+            */
         }
 
         // Select time
@@ -1351,4 +1363,4 @@
         };
     </script>
 </body>
-</html>
+                            </html>
