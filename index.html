@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- باقي الhead كما هو بدون تغيير -->
+    <!-- باقي الـ head كما هو بدون تغيير -->
     <style>
-        /* أضف هذه الأنماط الجديدة */
-        .admin-btn {
+        /* أنماط جديدة لأزرار الادمين */
+        .admin-panel .btn {
             background: var(--secondary);
             color: var(--primary);
             border: 2px solid var(--primary);
             padding: 8px 12px;
             font-size: 0.8em;
             margin: 3px;
+            min-width: 100px;
         }
         
-        .admin-btn:hover {
+        .admin-panel .btn:hover {
             background: var(--primary);
             color: var(--secondary);
         }
@@ -23,6 +24,22 @@
             margin: 5px 0;
             border: 1px solid var(--secondary);
             border-radius: 5px;
+            font-size: 0.9em;
+        }
+        
+        .admin-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 20px;
+            border: 2px solid var(--secondary);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -31,14 +48,14 @@
 
     <!-- كود الادمين المعدل -->
     <script>
-        // Admin system (English code)
+        // Admin system (English only)
         const ADMIN_PASSWORD = "CurlsByCarine123"; // Change this password
         let isAdminLoggedIn = false;
-        let availableTimes = ['10:00 AM', '12:00 PM', '2:00 PM', '4:00 PM'];
+        let availableTimes = []; // Start with no available times
         let bookings = []; // To store customer bookings
 
         function showAdminLogin() {
-            const password = prompt("Enter admin password:");
+            const password = prompt("Admin Password:");
             if (password === ADMIN_PASSWORD) {
                 isAdminLoggedIn = true;
                 showAdminPanel();
@@ -50,41 +67,50 @@
         function showAdminPanel() {
             if (!isAdminLoggedIn) return;
             
+            // Remove existing panel if any
+            const existingPanel = document.getElementById('admin-panel');
+            if (existingPanel) existingPanel.remove();
+            
             const adminHTML = `
-                <div id="admin-panel" style="position:fixed; top:20px; right:20px; z-index:1000; background:white; padding:20px; border:2px solid var(--secondary); border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.2); max-width:400px; max-height:80vh; overflow-y:auto;">
+                <div id="admin-panel" class="admin-panel">
                     <h2 style="color:var(--secondary); margin-top:0;">Admin Panel</h2>
                     
                     <h3>Manage Time Slots</h3>
                     <div style="margin-bottom:15px;">
-                        <label>New Date:</label>
+                        <label>Date:</label>
                         <input type="date" id="new-admin-date" style="width:100%; padding:8px; margin:5px 0;">
                     </div>
                     
                     <div style="margin-bottom:15px;">
-                        <label>New Time Slots (comma separated):</label>
+                        <label>Time Slots (comma separated):</label>
                         <input type="text" id="new-admin-times" placeholder="2:00 PM, 4:00 PM" style="width:100%; padding:8px; margin:5px 0;">
                     </div>
                     
-                    <button onclick="addAdminTimes()" class="admin-btn">
-                        <i class="fas fa-plus"></i> Add Slots
-                    </button>
-                    <button onclick="document.getElementById('admin-panel').remove()" class="admin-btn">
-                        <i class="fas fa-times"></i> Close
-                    </button>
+                    <div style="display: flex; gap: 5px;">
+                        <button onclick="addAdminTimes()" class="btn">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                        <button onclick="clearAllTimes()" class="btn" style="background:#ff4444; border-color:#ff4444;">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                        <button onclick="document.getElementById('admin-panel').remove()" class="btn">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
                     
                     <hr style="margin:15px 0; border-color:var(--secondary);">
                     
-                    <h3>Current Available Times</h3>
-                    <div id="current-times-list" style="max-height:150px; overflow-y:auto; margin-bottom:15px;"></div>
-                    
-                    <button onclick="clearAllTimes()" class="admin-btn" style="background:#ff4444; border-color:#ff4444;">
-                        <i class="fas fa-trash"></i> Clear All
-                    </button>
+                    <h3>Available Times</h3>
+                    <div id="current-times-list" style="max-height:150px; overflow-y:auto; margin-bottom:15px;">
+                        <p>No time slots available</p>
+                    </div>
                     
                     <hr style="margin:15px 0; border-color:var(--secondary);">
                     
                     <h3>Recent Bookings</h3>
-                    <div id="bookings-list" style="max-height:200px; overflow-y:auto;"></div>
+                    <div id="bookings-list" style="max-height:200px; overflow-y:auto;">
+                        <p>No bookings yet</p>
+                    </div>
                 </div>
             `;
             
@@ -95,10 +121,13 @@
 
         function loadCurrentTimes() {
             const timesList = document.getElementById('current-times-list');
+            if (!timesList) return;
+            
             timesList.innerHTML = '';
             
             if (availableTimes.length === 0) {
-                timesList.innerHTML = '<p>No available times</p>';
+                timesList.innerHTML = '<p>No time slots available</p>';
+                updateCustomerTimeSlots();
                 return;
             }
             
@@ -108,16 +137,16 @@
                 timeItem.style.borderBottom = '1px solid var(--gray)';
                 timeItem.style.display = 'flex';
                 timeItem.style.justifyContent = 'space-between';
+                timeItem.style.alignItems = 'center';
                 timeItem.innerHTML = `
                     <span>${time}</span>
-                    <button onclick="removeAdminTime('${time}')" style="background:none; border:none; color:red; cursor:pointer;">
-                        <i class="fas fa-times"></i>
+                    <button onclick="removeAdminTime('${time}')" class="btn" style="padding: 3px 8px; font-size: 0.7em;">
+                        <i class="fas fa-times"></i> Remove
                     </button>
                 `;
                 timesList.appendChild(timeItem);
             });
             
-            // Update customer time slots
             updateCustomerTimeSlots();
         }
 
@@ -125,23 +154,22 @@
             const date = document.getElementById('new-admin-date').value;
             const timesInput = document.getElementById('new-admin-times').value;
             
-            if (!date || !timesInput) {
-                alert("Please enter both date and times");
+            if (!timesInput) {
+                alert("Please enter time slots");
                 return;
             }
             
             const newTimes = timesInput.split(',').map(t => t.trim()).filter(t => t);
             availableTimes = [...new Set([...availableTimes, ...newTimes])]; // Remove duplicates
             
-            alert(`Added ${newTimes.length} new time slots for ${date}`);
+            alert(`Added ${newTimes.length} new time slot(s)`);
             loadCurrentTimes();
             
-            document.getElementById('new-admin-date').value = '';
             document.getElementById('new-admin-times').value = '';
         }
 
         function removeAdminTime(time) {
-            if (confirm(`Delete ${time}?`)) {
+            if (confirm(`Delete time slot: ${time}?`)) {
                 availableTimes = availableTimes.filter(t => t !== time);
                 loadCurrentTimes();
             }
@@ -159,6 +187,12 @@
             if (!timeSlotsContainer) return;
             
             timeSlotsContainer.innerHTML = '';
+            
+            if (availableTimes.length === 0) {
+                timeSlotsContainer.innerHTML = '<p>No available time slots. Please check back later.</p>';
+                return;
+            }
+            
             availableTimes.forEach(time => {
                 timeSlotsContainer.innerHTML += `
                     <div class="time-slot" onclick="selectTime(this, '${time}')">${time}</div>
@@ -167,8 +201,6 @@
         }
 
         function loadBookings() {
-            // In a real app, you would fetch from database
-            // This is just a simulation
             const bookingsList = document.getElementById('bookings-list');
             if (!bookingsList) return;
             
@@ -184,15 +216,15 @@
                 bookingItem.className = 'booking-item';
                 bookingItem.innerHTML = `
                     <strong>${booking.name}</strong><br>
-                    ${booking.services.join(', ')}<br>
-                    ${booking.date} at ${booking.time}<br>
-                    ${booking.total} EGP
+                    <small>${booking.date} at ${booking.time}</small><br>
+                    Services: ${booking.services.join(', ')}<br>
+                    Total: ${booking.total} EGP
                 `;
                 bookingsList.appendChild(bookingItem);
             });
         }
 
-        // Simulate form submission to capture bookings
+        // Capture form submissions
         document.addEventListener('DOMContentLoaded', function() {
             const bookingForm = document.querySelector('form');
             if (bookingForm) {
@@ -200,19 +232,22 @@
                     const bookingData = {
                         name: document.getElementById('name').value,
                         services: booking.services.map(s => s.name),
-                        date: booking.date,
+                        date: booking.date || document.getElementById('appointment-date').value,
                         time: booking.time,
                         total: document.getElementById('form-total').value
                     };
                     bookings.push(bookingData);
                 });
             }
+            
+            // Initialize with no available times
+            updateCustomerTimeSlots();
         });
     </script>
 
-    <!-- Admin access button (golden frame) -->
-    <div style="position:fixed; bottom:10px; right:10px; z-index:999;">
-        <button onclick="showAdminLogin()" style="background:var(--secondary); color:var(--primary); border:2px solid var(--primary); border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+    <!-- زر الادمين الذهبي -->
+    <div style="position:fixed; bottom:20px; right:20px; z-index:999;">
+        <button onclick="showAdminLogin()" style="background:var(--secondary); color:var(--primary); border:2px solid var(--primary); border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
             <i class="fas fa-lock" style="font-size:16px;"></i>
         </button>
     </div>
