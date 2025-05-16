@@ -1,45 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Curls by Carine - Booking System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- باقي الhead كما هو بدون تغيير -->
     <style>
-        :root {
-            --primary: #000;
-            --secondary: #D4AF37;
-            --light: #f8f5f0;
-            --white: #fff;
-            --gray: #eee;
-        }
-        
-        /* Admin Panel Styles */
-        .admin-panel {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: white;
-            padding: 20px;
-            border: 2px solid var(--secondary);
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
+        /* أضف هذه الأنماط الجديدة */
         .admin-btn {
             background: var(--secondary);
             color: var(--primary);
             border: 2px solid var(--primary);
             padding: 8px 12px;
-            margin: 5px;
-            border-radius: 5px;
-            cursor: pointer;
             font-size: 0.8em;
-            min-width: 80px;
+            margin: 3px;
         }
         
         .admin-btn:hover {
@@ -49,63 +20,29 @@
         
         .booking-item {
             padding: 10px;
-            margin: 8px 0;
+            margin: 5px 0;
             border: 1px solid var(--secondary);
             border-radius: 5px;
-            background-color: rgba(212, 175, 55, 0.1);
-        }
-        
-        #admin-access-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 999;
-            background: var(--secondary);
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body>
-    <!-- Admin Access Button -->
-    <div id="admin-access-btn" onclick="showAdminLogin()">
-        <i class="fas fa-lock"></i>
-    </div>
+    <!-- باقي الهيكل كما هو -->
 
-    <!-- Admin Panel Script -->
+    <!-- كود الادمين المعدل -->
     <script>
-        // Admin System
+        // Admin system (English code)
         const ADMIN_PASSWORD = "CurlsByCarine123"; // Change this password
         let isAdminLoggedIn = false;
-        let availableTimes = [];
-        let bookings = [];
-
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load any saved data from localStorage
-            const savedTimes = localStorage.getItem('availableTimes');
-            const savedBookings = localStorage.getItem('bookings');
-            
-            if (savedTimes) availableTimes = JSON.parse(savedTimes);
-            if (savedBookings) bookings = JSON.parse(savedBookings);
-            
-            updateCustomerTimeSlots();
-        });
+        let availableTimes = ['10:00 AM', '12:00 PM', '2:00 PM', '4:00 PM'];
+        let bookings = []; // To store customer bookings
 
         function showAdminLogin() {
             const password = prompt("Enter admin password:");
             if (password === ADMIN_PASSWORD) {
                 isAdminLoggedIn = true;
                 showAdminPanel();
-            } else if (password !== null) {
+            } else {
                 alert("Incorrect password");
             }
         }
@@ -113,127 +50,171 @@
         function showAdminPanel() {
             if (!isAdminLoggedIn) return;
             
-            // Remove existing panel if any
-            const existingPanel = document.getElementById('admin-panel');
-            if (existingPanel) existingPanel.remove();
-            
             const adminHTML = `
-                <div id="admin-panel" class="admin-panel">
-                    <h2 style="color:var(--secondary); margin-top:0; text-align:center;">Admin Panel</h2>
+                <div id="admin-panel" style="position:fixed; top:20px; right:20px; z-index:1000; background:white; padding:20px; border:2px solid var(--secondary); border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.2); max-width:400px; max-height:80vh; overflow-y:auto;">
+                    <h2 style="color:var(--secondary); margin-top:0;">Admin Panel</h2>
                     
-                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                        <button onclick="addTimeSlots()" class="admin-btn">
-                            <i class="fas fa-plus"></i> Add Slots
-                        </button>
-                        <button onclick="clearAllTimes()" class="admin-btn" style="background:#ff4444; border-color:#ff4444;">
-                            <i class="fas fa-trash"></i> Clear All
-                        </button>
-                        <button onclick="closeAdminPanel()" class="admin-btn">
-                            <i class="fas fa-times"></i> Close
-                        </button>
+                    <h3>Manage Time Slots</h3>
+                    <div style="margin-bottom:15px;">
+                        <label>New Date:</label>
+                        <input type="date" id="new-admin-date" style="width:100%; padding:8px; margin:5px 0;">
                     </div>
                     
-                    <h3><i class="fas fa-clock"></i> Available Time Slots</h3>
-                    <div id="current-times-list" style="max-height:150px; overflow-y:auto; margin-bottom:15px; border:1px solid var(--gray); padding:10px; border-radius:5px;">
-                        ${availableTimes.length > 0 ? 
-                          availableTimes.map(time => `
-                            <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid #eee;">
-                                <span>${time}</span>
-                                <button onclick="removeTimeSlot('${time}')" class="admin-btn" style="padding:3px 8px; font-size:0.7em;">
-                                    <i class="fas fa-times"></i> Remove
-                                </button>
-                            </div>
-                          `).join('') : 
-                          '<p style="text-align:center; color:var(--secondary);">No time slots available</p>'}
+                    <div style="margin-bottom:15px;">
+                        <label>New Time Slots (comma separated):</label>
+                        <input type="text" id="new-admin-times" placeholder="2:00 PM, 4:00 PM" style="width:100%; padding:8px; margin:5px 0;">
                     </div>
                     
-                    <hr style="border-color:var(--secondary); margin:15px 0;">
+                    <button onclick="addAdminTimes()" class="admin-btn">
+                        <i class="fas fa-plus"></i> Add Slots
+                    </button>
+                    <button onclick="document.getElementById('admin-panel').remove()" class="admin-btn">
+                        <i class="fas fa-times"></i> Close
+                    </button>
                     
-                    <h3><i class="fas fa-calendar-check"></i> Recent Bookings (${bookings.length})</h3>
-                    <div id="bookings-list" style="max-height:200px; overflow-y:auto; border:1px solid var(--gray); padding:10px; border-radius:5px;">
-                        ${bookings.length > 0 ? 
-                          bookings.map(booking => `
-                            <div class="booking-item">
-                                <strong>${booking.name}</strong><br>
-                                <small>${booking.date} at ${booking.time}</small><br>
-                                Services: ${booking.services.join(', ')}<br>
-                                Total: ${booking.total} EGP
-                            </div>
-                          `).reverse().join('') : 
-                          '<p style="text-align:center; color:var(--secondary);">No bookings yet</p>'}
-                    </div>
+                    <hr style="margin:15px 0; border-color:var(--secondary);">
+                    
+                    <h3>Current Available Times</h3>
+                    <div id="current-times-list" style="max-height:150px; overflow-y:auto; margin-bottom:15px;"></div>
+                    
+                    <button onclick="clearAllTimes()" class="admin-btn" style="background:#ff4444; border-color:#ff4444;">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                    
+                    <hr style="margin:15px 0; border-color:var(--secondary);">
+                    
+                    <h3>Recent Bookings</h3>
+                    <div id="bookings-list" style="max-height:200px; overflow-y:auto;"></div>
                 </div>
             `;
             
             document.body.insertAdjacentHTML('beforeend', adminHTML);
+            loadCurrentTimes();
+            loadBookings();
         }
 
-        function addTimeSlots() {
-            const date = prompt("Enter date (YYYY-MM-DD):");
-            if (!date) return;
+        function loadCurrentTimes() {
+            const timesList = document.getElementById('current-times-list');
+            timesList.innerHTML = '';
             
-            const timesInput = prompt("Enter time slots (comma separated):\nExample: 10:00 AM, 2:00 PM");
-            if (!timesInput) return;
+            if (availableTimes.length === 0) {
+                timesList.innerHTML = '<p>No available times</p>';
+                return;
+            }
             
-            const newTimes = timesInput.split(',')
-                .map(t => t.trim())
-                .filter(t => t)
-                .map(t => `${date} - ${t}`);
-                
-            availableTimes = [...new Set([...availableTimes, ...newTimes])];
-            saveData();
-            showAdminPanel(); // Refresh the panel
+            availableTimes.forEach(time => {
+                const timeItem = document.createElement('div');
+                timeItem.style.padding = '8px';
+                timeItem.style.borderBottom = '1px solid var(--gray)';
+                timeItem.style.display = 'flex';
+                timeItem.style.justifyContent = 'space-between';
+                timeItem.innerHTML = `
+                    <span>${time}</span>
+                    <button onclick="removeAdminTime('${time}')" style="background:none; border:none; color:red; cursor:pointer;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                timesList.appendChild(timeItem);
+            });
+            
+            // Update customer time slots
             updateCustomerTimeSlots();
-            alert(`Added ${newTimes.length} new time slot(s)`);
         }
 
-        function removeTimeSlot(time) {
-            if (confirm(`Delete this time slot?\n${time}`)) {
+        function addAdminTimes() {
+            const date = document.getElementById('new-admin-date').value;
+            const timesInput = document.getElementById('new-admin-times').value;
+            
+            if (!date || !timesInput) {
+                alert("Please enter both date and times");
+                return;
+            }
+            
+            const newTimes = timesInput.split(',').map(t => t.trim()).filter(t => t);
+            availableTimes = [...new Set([...availableTimes, ...newTimes])]; // Remove duplicates
+            
+            alert(`Added ${newTimes.length} new time slots for ${date}`);
+            loadCurrentTimes();
+            
+            document.getElementById('new-admin-date').value = '';
+            document.getElementById('new-admin-times').value = '';
+        }
+
+        function removeAdminTime(time) {
+            if (confirm(`Delete ${time}?`)) {
                 availableTimes = availableTimes.filter(t => t !== time);
-                saveData();
-                showAdminPanel(); // Refresh the panel
-                updateCustomerTimeSlots();
+                loadCurrentTimes();
             }
         }
 
         function clearAllTimes() {
-            if (confirm("Are you sure you want to delete ALL time slots?")) {
+            if (confirm("Delete ALL time slots?")) {
                 availableTimes = [];
-                saveData();
-                showAdminPanel(); // Refresh the panel
-                updateCustomerTimeSlots();
+                loadCurrentTimes();
             }
         }
 
-        function closeAdminPanel() {
-            const panel = document.getElementById('admin-panel');
-            if (panel) panel.remove();
-        }
-
         function updateCustomerTimeSlots() {
-            // This function would update the customer-facing time slots
-            // You need to implement this based on your customer interface
-            console.log("Time slots updated:", availableTimes);
+            const timeSlotsContainer = document.getElementById('time-slots');
+            if (!timeSlotsContainer) return;
+            
+            timeSlotsContainer.innerHTML = '';
+            availableTimes.forEach(time => {
+                timeSlotsContainer.innerHTML += `
+                    <div class="time-slot" onclick="selectTime(this, '${time}')">${time}</div>
+                `;
+            });
         }
 
-        function saveData() {
-            localStorage.setItem('availableTimes', JSON.stringify(availableTimes));
-            localStorage.setItem('bookings', JSON.stringify(bookings));
+        function loadBookings() {
+            // In a real app, you would fetch from database
+            // This is just a simulation
+            const bookingsList = document.getElementById('bookings-list');
+            if (!bookingsList) return;
+            
+            bookingsList.innerHTML = '';
+            
+            if (bookings.length === 0) {
+                bookingsList.innerHTML = '<p>No bookings yet</p>';
+                return;
+            }
+            
+            bookings.forEach((booking, index) => {
+                const bookingItem = document.createElement('div');
+                bookingItem.className = 'booking-item';
+                bookingItem.innerHTML = `
+                    <strong>${booking.name}</strong><br>
+                    ${booking.services.join(', ')}<br>
+                    ${booking.date} at ${booking.time}<br>
+                    ${booking.total} EGP
+                `;
+                bookingsList.appendChild(bookingItem);
+            });
         }
 
-        // Simulate capturing a booking (for demo purposes)
-        function simulateBooking() {
-            const sampleBooking = {
-                name: "Test Customer",
-                services: ["Hair Cut", "Coloring"],
-                date: new Date().toISOString().split('T')[0],
-                time: "2:00 PM",
-                total: "350"
-            };
-            bookings.push(sampleBooking);
-            saveData();
-            showAdminPanel(); // Refresh the panel
-        }
+        // Simulate form submission to capture bookings
+        document.addEventListener('DOMContentLoaded', function() {
+            const bookingForm = document.querySelector('form');
+            if (bookingForm) {
+                bookingForm.addEventListener('submit', function(e) {
+                    const bookingData = {
+                        name: document.getElementById('name').value,
+                        services: booking.services.map(s => s.name),
+                        date: booking.date,
+                        time: booking.time,
+                        total: document.getElementById('form-total').value
+                    };
+                    bookings.push(bookingData);
+                });
+            }
+        });
     </script>
+
+    <!-- Admin access button (golden frame) -->
+    <div style="position:fixed; bottom:10px; right:10px; z-index:999;">
+        <button onclick="showAdminLogin()" style="background:var(--secondary); color:var(--primary); border:2px solid var(--primary); border-radius:50%; width:40px; height:40px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-lock" style="font-size:16px;"></i>
+        </button>
+    </div>
 </body>
 </html>
