@@ -6,6 +6,8 @@
     <title>Curls by Carine - Booking</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Add Google Calendar API -->
+    <script src="https://apis.google.com/js/api.js"></script>
     <style>
         :root {
             --primary: #000;
@@ -208,6 +210,31 @@
             cursor: pointer;
         }
         
+        /* Google Calendar Styles */
+        #calendar-container {
+            width: 100%;
+            margin: 20px 0;
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        #calendar {
+            height: 500px;
+            width: 100%;
+        }
+        
+        .fc-event {
+            cursor: pointer;
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            color: var(--primary);
+        }
+        
+        .fc-daygrid-event-dot {
+            border-color: var(--primary) !important;
+        }
+        
         @media (max-width: 768px) {
             .btn {
                 display: block;
@@ -222,8 +249,14 @@
             .inspiration-gallery {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            #calendar {
+                height: 400px;
+            }
         }
     </style>
+    <!-- Add FullCalendar CSS -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 </head>
 <body>
     <header>
@@ -241,7 +274,7 @@
             </a>
             <a href="#" class="btn" onclick="showSection('booking')">
                 <i class="fas fa-calendar-check"></i> Book Appointment
-            </a>
+            </a> 
         </section>
 
         <!-- Services Page -->
@@ -335,17 +368,11 @@
                         <input type="hidden" name="total" id="form-total">
                         
                         <h3>Select Date & Time</h3>
-                        <label>Date:</label>
-                        <input type="date" id="appointment-date" name="date" required min="">
-                        
-                        <label>Time:</label>
-                        <div class="time-slots" id="time-slots">
-                            <div class="time-slot" onclick="selectTime(this, '10:00 AM')">10:00 AM</div>
-                            <div class="time-slot" onclick="selectTime(this, '12:00 PM')">12:00 PM</div>
-                            <div class="time-slot" onclick="selectTime(this, '2:00 PM')">2:00 PM</div>
-                            <div class="time-slot" onclick="selectTime(this, '4:00 PM')">4:00 PM</div>
+                        <div id="calendar-container">
+                            <div id="calendar"></div>
                         </div>
-                        <input type="hidden" id="form-time" name="time">
+                        <input type="hidden" id="appointment-date" name="date" required>
+                        <input type="hidden" id="appointment-time" name="time" required>
                         
                         <h3>Your Information</h3>
                         <label>Full Name:</label>
@@ -410,6 +437,8 @@
         </section>
     </div>
 
+    <!-- Add FullCalendar JS -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
     <script>
         // Booking data
         let booking = {
@@ -419,6 +448,75 @@
             hairstyle: null,
             inspirationPhotos: []
         };
+
+        // Calendar instance
+        let calendar;
+
+        // Initialize calendar
+        function initCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                selectable: true,
+                selectMirror: true,
+                dayMaxEvents: true,
+                events: {
+                    url: 'https://www.googleapis.com/calendar/v3/calendars/YOUR_CALENDAR_ID/events',
+                    method: 'GET',
+                    extraParams: {
+                        key: 'YOUR_API_KEY',
+                        timeMin: new Date().toISOString()
+                    },
+                    success: function(response) {
+                        const events = response.items.map(event => {
+                            return {
+                                title: 'Available',
+                                start: event.start.dateTime || event.start.date,
+                                end: event.end.dateTime || event.end.date,
+                                backgroundColor: '#D4AF37',
+                                borderColor: '#000',
+                                textColor: '#000'
+                            };
+                        });
+                        calendar.addEventSource(events);
+                    },
+                    failure: function() {
+                        // Fallback to manual events if API fails
+                        calendar.addEventSource([
+                            {
+                                title: 'Available Slot',
+                                start: new Date(),
+                                allDay: false,
+                                backgroundColor: '#D4AF37'
+                            }
+                        ]);
+                    }
+                },
+                dateClick: function(info) {
+                    // Handle date selection
+                    document.getElementById('appointment-date').value = info.dateStr;
+                    booking.date = info.dateStr;
+                },
+                eventClick: function(info) {
+                    // Handle time selection
+                    document.getElementById('appointment-time').value = info.event.startStr;
+                    booking.time = info.event.startStr;
+                    info.el.style.borderColor = '#000';
+                },
+                eventDidMount: function(info) {
+                    // Style events
+                    info.el.style.border = '2px solid #000';
+                }
+            });
+
+            calendar.render();
+        }
 
         // Show section
         function showSection(sectionId) {
@@ -430,6 +528,9 @@
             if (sectionId === 'booking') {
                 resetBooking();
                 loadServices();
+                if (!calendar) {
+                    initCalendar();
+                }
             }
         }
 
@@ -542,16 +643,6 @@
                     Streaks (Highlights) <span class="price">120 EGP</span>
                 </div>
             `;
-        }
-
-        // Select time
-        function selectTime(element, time) {
-            document.querySelectorAll('.time-slot').forEach(slot => {
-                slot.classList.remove('selected');
-            });
-            element.classList.add('selected');
-            booking.time = time;
-            document.getElementById('form-time').value = time;
         }
 
         // Booking steps navigation
@@ -699,17 +790,12 @@
 
         // Set minimum date on page load
         window.onload = function() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('appointment-date').min = today;
+            // Initialize calendar
+            initCalendar();
             
             // Listen for Afro hair selection change
             document.getElementById('afro-hair').addEventListener('change', updateTotal);
-            
-            // Listen for date change
-            document.getElementById('appointment-date').addEventListener('change', function() {
-                booking.date = this.value;
-            });
         };
     </script>
 </body>
-</html>
+    </html>
