@@ -1,73 +1,137 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Dashboard | Curls by Carine</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/admin.css">
-</head>
-<body>
-    <!-- Security Check -->
-    <script>
-        if(localStorage.getItem('isLoggedIn') !== 'true') {
-            window.location.href = 'login.html';
+<!-- أضيفي هذا الكود قبل </body> -->
+<script>
+    // نظام تسجيل دخول الإدمين (كلمة مرور بسيطة)
+    const ADMIN_PASSWORD = "CurlsByCarine123"; // غيّريها لكلمة سر قوية
+    let isAdminLoggedIn = false;
+
+    function showAdminLogin() {
+        const password = prompt("أدخل كلمة مرور الإدمين:");
+        if (password === ADMIN_PASSWORD) {
+            isAdminLoggedIn = true;
+            showAdminPanel();
+        } else {
+            alert("كلمة المرور غير صحيحة");
+        }
+    }
+
+    function showAdminPanel() {
+        if (!isAdminLoggedIn) return;
+        
+        // إنشاء واجهة الإدمين
+        const adminHTML = `
+            <div id="admin-panel" style="position:fixed; top:20px; right:20px; z-index:1000; background:white; padding:20px; border:2px solid var(--secondary); border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.2); max-width:400px;">
+                <h2 style="color:var(--secondary); margin-top:0;">لوحة التحكم</h2>
+                
+                <h3>إدارة المواعيد</h3>
+                <div style="margin-bottom:15px;">
+                    <label>تاريخ جديد:</label>
+                    <input type="date" id="new-admin-date" style="width:100%; padding:8px; margin:5px 0;">
+                </div>
+                
+                <div style="margin-bottom:15px;">
+                    <label>مواعيد جديدة (افصل بينها بفاصلة):</label>
+                    <input type="text" id="new-admin-times" placeholder="2:00 PM, 4:00 PM" style="width:100%; padding:8px; margin:5px 0;">
+                </div>
+                
+                <button onclick="addAdminTimes()" class="btn" style="margin-right:5px;">
+                    <i class="fas fa-plus"></i> إضافة مواعيد
+                </button>
+                <button onclick="document.getElementById('admin-panel').remove()" class="btn">
+                    <i class="fas fa-times"></i> إغلاق
+                </button>
+                
+                <hr style="margin:15px 0; border-color:var(--secondary);">
+                
+                <h3>المواعيد المتاحة حالياً</h3>
+                <div id="current-times-list" style="max-height:200px; overflow-y:auto; margin-bottom:15px;">
+                    <!-- المواعيد الحالية تظهر هنا -->
+                </div>
+                
+                <button onclick="clearAllTimes()" class="btn" style="background:#ff4444; border-color:#ff4444;">
+                    <i class="fas fa-trash"></i> مسح جميع المواعيد
+                </button>
+            </div>
+        `;
+        
+        // إضافة الواجهة إلى الصفحة
+        document.body.insertAdjacentHTML('beforeend', adminHTML);
+        loadCurrentTimes();
+    }
+
+    // دالة لتحميل المواعيد الحالية
+    function loadCurrentTimes() {
+        const timesList = document.getElementById('current-times-list');
+        timesList.innerHTML = '';
+        
+        // يمكنك استبدال هذا بجلب البيانات من قاعدة بيانات إذا كنتِ تستخدمينها
+        const currentTimes = ['10:00 AM', '12:00 PM', '2:00 PM', '4:00 PM'];
+        
+        if (currentTimes.length === 0) {
+            timesList.innerHTML = '<p>لا توجد مواعيد متاحة حالياً</p>';
+            return;
         }
         
-        function logout() {
-            localStorage.removeItem('isLoggedIn');
-            window.location.href = 'login.html';
+        currentTimes.forEach(time => {
+            const timeItem = document.createElement('div');
+            timeItem.style.padding = '8px';
+            timeItem.style.borderBottom = '1px solid var(--gray)';
+            timeItem.style.display = 'flex';
+            timeItem.style.justifyContent = 'space-between';
+            timeItem.innerHTML = `
+                <span>${time}</span>
+                <button onclick="removeAdminTime('${time}')" style="background:none; border:none; color:red; cursor:pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            timesList.appendChild(timeItem);
+        });
+    }
+
+    // دالة لإضافة مواعيد جديدة
+    function addAdminTimes() {
+        const date = document.getElementById('new-admin-date').value;
+        const timesInput = document.getElementById('new-admin-times').value;
+        
+        if (!date || !timesInput) {
+            alert("الرجاء إدخال التاريخ والمواعيد");
+            return;
         }
-    </script>
-
-    <div class="sidebar">
-        <div class="logo">
-            <img src="../images/logo.png" alt="Logo">
-        </div>
         
-        <nav>
-            <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="#"><i class="fas fa-calendar"></i> Appointments</a>
-            <a href="#"><i class="fas fa-users"></i> Clients</a>
-            <a href="#"><i class="fas fa-box"></i> Products</a>
-            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </nav>
-    </div>
-
-    <div class="main-content">
-        <div class="stats-cards">
-            <div class="card">
-                <h3>Today's Appointments</h3>
-                <p>15</p>
-            </div>
-            <div class="card">
-                <h3>Total Clients</h3>
-                <p>120</p>
-            </div>
-            <div class="card">
-                <h3>Monthly Revenue</h3>
-                <p>$2,850</p>
-            </div>
-        </div>
+        const newTimes = timesInput.split(',').map(t => t.trim()).filter(t => t);
         
-        <div class="recent-orders">
-            <h2>Recent Appointments</h2>
-            <table>
-                <tr>
-                    <th>Client</th>
-                    <th>Service</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                </tr>
-                <tr>
-                    <td>Sarah Johnson</td>
-                    <td>Hair Treatment</td>
-                    <td>May 15, 2024</td>
-                    <td><span class="status completed">Completed</span></td>
-                </tr>
-            </table>
-        </div>
-    </div>
+        // هنا يمكنك إرسال البيانات إلى قاعدة البيانات أو حفظها محلياً
+        alert(`تمت إضافة ${newTimes.length} مواعيد جديدة لليوم ${date}`);
+        
+        // تحديث القائمة
+        loadCurrentTimes();
+        
+        // مسح الحقول
+        document.getElementById('new-admin-date').value = '';
+        document.getElementById('new-admin-times').value = '';
+    }
 
-    <script src="assets/admin.js"></script>
-</body>
-</html>
+    // دالة لحذف موعد محدد
+    function removeAdminTime(time) {
+        if (confirm(`هل تريدين حذف الموعد ${time}؟`)) {
+            // هنا كود لحذف الموعد من قاعدة البيانات
+            alert(`تم حذف الموعد ${time}`);
+            loadCurrentTimes();
+        }
+    }
+
+    // دالة لمسح جميع المواعيد
+    function clearAllTimes() {
+        if (confirm("هل أنتِ متأكدة من حذف جميع المواعيد؟ هذا الإجراء لا يمكن التراجع عنه!")) {
+            // هنا كود لمسح جميع المواعيد من قاعدة البيانات
+            alert("تم حذف جميع المواعيد");
+            loadCurrentTimes();
+        }
+    }
+</script>
+
+<!-- أضيفي هذا الزر في مكان غير ظاهر للعملاء (مثلًا بعد </header>) -->
+<div style="position:fixed; bottom:10px; right:10px; z-index:999;">
+    <button onclick="showAdminLogin()" style="background:var(--primary); color:var(--secondary); border:2px solid var(--secondary); border-radius:50%; width:50px; height:50px; cursor:pointer;">
+        <i class="fas fa-lock"></i>
+    </button>
+</div>
