@@ -451,7 +451,7 @@
                 Long Hair <span class="price">550 EGP</span>
             </div>
             <div class="service" onclick="selectService(this, 'Afro Hair', 600)">
-    Afro Hair <span class="price">600 EGP</span>
+                Afro Hair <span class="price">600 EGP</span>
             </div>
             
             <h3>Hairstyles</h3>
@@ -798,6 +798,9 @@
                 <div class="service" onclick="selectService(this, 'Long Hair', 550)">
                     Long Hair <span class="price">550 EGP</span>
                 </div>
+                <div class="service" onclick="selectService(this, 'Afro Hair', 600)">
+                    Afro Hair <span class="price">600 EGP</span>
+                </div>
             `;
             
             // Hairstyles
@@ -992,7 +995,7 @@
             timeSlotsContainer.innerHTML = '';
             const selectedDate = appointmentDateInput.value;
 
-            // No need for this check if appointmentDateInput.value is always set to today
+            // No need for this check (removed the conditional note) as appointmentDateInput.value is always set to today
             // if (!selectedDate) {
             //     timeSlotsContainer.innerHTML = '<div class="note">Please select a date to see available time slots.</div>';
             //     return;
@@ -1041,8 +1044,9 @@
                 alert('Please upload an inspiration photo for your Custom Hairstyle.');
                 return false;
             }
-            if (!booking.date || !booking.time) {
-                alert('Please select a date and time for your appointment.');
+            // Check if a time slot has been selected
+            if (!booking.time) { // Changed this to check booking.time directly
+                alert('Please select a time for your appointment.');
                 return false;
             }
             if (!document.getElementById('name').value || !document.getElementById('phone').value || !document.getElementById('email').value || !document.getElementById('payment-method').value) {
