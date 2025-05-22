@@ -859,101 +859,138 @@
                     document.getElementById('hairstyle-upload').classList.remove('hidden');
                 }
             }
+            updateTotal();
         }
 
-        // Update total price and deposit
+        // Update total price
         function updateTotal() {
-            let total = 0;
-            booking.services.forEach(service => {
-                total += service.price;
-            });
-
-            // Hairstyle price is dynamic, so only add a placeholder if selected
+            let total = booking.services.reduce((sum, service) => sum + service.price, 0);
+            
+            // Add hairstyle price if selected (it's 0 initially, but needs to be accounted for)
             if (booking.hairstyle) {
-                // If a specific base price for hairstyle is needed for deposit calculation, set it here.
-                // For now, it's 0 as the final price is determined by the stylist.
                 total += booking.hairstyle.price;
             }
 
-            let deposit = total * 0.5; // 50% deposit
-
-            document.getElementById('total-display').textContent = `Total: ${total} EGP | Required Deposit: ${deposit} EGP`;
-            document.getElementById('form-services').value = JSON.stringify(booking.services.concat(booking.hairstyle ? [booking.hairstyle] : []));
+            const deposit = total * 0.5; // 50% deposit
+            
+            document.getElementById('total-display').innerHTML = `Total: ${total} EGP | Required Deposit: ${deposit.toFixed(2)} EGP`;
+            document.getElementById('form-services').value = JSON.stringify(booking.services.map(s => s.name));
             document.getElementById('form-total').value = total;
         }
 
-        // Handle file uploads for inspiration photos
-        function handleInspirationPhoto(event, type) {
-            const files = event.target.files;
-            if (!files.length) return;
-
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const photo = {
-                        src: e.target.result,
-                        name: file.name,
-                        type: type // 'dry-cut' or 'hairstyle'
-                    };
-                    booking.inspirationPhotos.push(photo);
-                    renderInspirationGallery();
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        // Render inspiration photo gallery
-        function renderInspirationGallery() {
-            inspirationGallery.innerHTML = '';
-            booking.inspirationPhotos.forEach((photo, index) => {
-                const div = document.createElement('div');
-                div.classList.add('inspiration-item');
-                div.innerHTML = `
-                    <img src="${photo.src}" alt="${photo.name}">
-                    <button type="button" class="delete-btn" onclick="removeInspirationPhoto(${index})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                inspirationGallery.appendChild(div);
-            });
-        }
-
-        // Remove inspiration photo
-        function removeInspirationPhoto(index) {
-            booking.inspirationPhotos.splice(index, 1);
-            renderInspirationGallery();
-        }
-
-        // Add event listeners for inspiration photo inputs
-        hairstylePhotoInput.addEventListener('change', (e) => handleInspirationPhoto(e, 'hairstyle'));
-        dryCutPhotoInput.addEventListener('change', (e) => handleInspirationPhoto(e, 'dry-cut'));
-
-
-        // Navigation between booking steps
+        // Next/Prev steps in booking
         function nextStep(step) {
             if (step === 2) {
-                // Validate services selection for Step 1
                 if (booking.services.length === 0 && !booking.hairstyle) {
-                    alert('Please select at least one service or a custom hairstyle.');
+                    alert('Please select at least one service or a hairstyle to proceed.');
                     return;
                 }
                 if (booking.hairstyle && hairstylePhotoInput.files.length === 0) {
-                    alert('Please upload an inspiration photo for your Custom Hairstyle.');
+                    alert('An inspiration photo is required for custom hairstyles.');
                     return;
                 }
             }
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.add('hidden');
-            document.getElementById(`step${step}`).classList.remove('hidden');
+            document.getElementById('confirmation').classList.add('hidden');
+            document.getElementById('step' + step).classList.remove('hidden');
         }
 
         function prevStep(step) {
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.add('hidden');
-            document.getElementById(`step${step}`).classList.remove('hidden');
+            document.getElementById('confirmation').classList.add('hidden');
+            document.getElementById('step' + step).classList.remove('hidden');
         }
 
-        // Reset booking form
+        // Handle time slot selection
+        function selectTimeSlot(element, time) {
+            const selectedSlots = timeSlotsContainer.querySelectorAll('.time-slot.selected');
+            selectedSlots.forEach(slot => slot.classList.remove('selected'));
+            element.classList.add('selected');
+            booking.time = time;
+            document.getElementById('form-time').value = time;
+        }
+
+        // Load available time slots (dummy data for now)
+        function loadAvailableTimeSlots() {
+            const selectedDate = appointmentDateInput.value;
+            const todayDate = formattedToday; // Use the stored formattedToday
+
+            // Clear previous slots
+            timeSlotsContainer.innerHTML = '';
+
+            // Dummy data for available slots
+            const dummySlots = [
+                { date: todayDate, time: '10:00 AM', booked: false },
+                { date: todayDate, time: '12:00 PM', booked: false },
+                { date: todayDate, time: '2:00 PM', booked: true },
+                { date: todayDate, time: '4:00 PM', booked: false },
+                { date: '2025-05-23', time: '11:00 AM', booked: false },
+                { date: '2025-05-23', time: '1:00 PM', booked: false }
+            ];
+
+            const slotsForSelectedDate = dummySlots.filter(slot => slot.date === selectedDate);
+
+            if (slotsForSelectedDate.length > 0) {
+                slotsForSelectedDate.forEach(slot => {
+                    const slotElement = document.createElement('div');
+                    slotElement.classList.add('time-slot');
+                    if (slot.booked) {
+                        slotElement.classList.add('booked');
+                    } else {
+                        slotElement.onclick = () => selectTimeSlot(slotElement, slot.time);
+                    }
+                    slotElement.textContent = slot.time;
+                    timeSlotsContainer.appendChild(slotElement);
+                });
+            } else {
+                timeSlotsContainer.innerHTML = '<p>No available slots for this date. Please choose another date.</p>';
+            }
+        }
+
+        // Event listener for date change
+        appointmentDateInput.addEventListener('change', loadAvailableTimeSlots);
+
+        // Confirmation before booking
+        function confirmBooking() {
+            if (booking.services.length === 0 && !booking.hairstyle) {
+                alert('Please select at least one service or a hairstyle.');
+                return false;
+            }
+            if (!booking.time) {
+                alert('Please select a time slot.');
+                return false;
+            }
+            if (document.getElementById('hairstyle-upload').classList.contains('hidden') === false && hairstylePhotoInput.files.length === 0) {
+                 alert('Please upload an inspiration photo for your hairstyle.');
+                 return false;
+            }
+            if (document.getElementById('payment-proof').files.length === 0) {
+                 alert('Please upload a payment screenshot.');
+                 return false;
+            }
+            
+            // Collect all inspiration photos
+            const allPhotos = [];
+            if (dryCutPhotoInput.files.length > 0) {
+                allPhotos.push({ type: 'dry_cut', file: dryCutPhotoInput.files[0] });
+            }
+            if (hairstylePhotoInput.files.length > 0) {
+                allPhotos.push({ type: 'hairstyle', file: hairstylePhotoInput.files[0] });
+            }
+            booking.inspirationPhotos = allPhotos;
+
+            // This form uses formsubmit.co which handles file uploads automatically.
+            // If you were handling this server-side, you'd append files to FormData here.
+            
+            // Show confirmation message
+            document.getElementById('booking-steps').classList.add('hidden');
+            document.getElementById('confirmation').classList.remove('hidden');
+            return true; // Allow form submission
+        }
+
+        // Reset booking state
         function resetBooking() {
             booking = {
                 services: [],
@@ -962,151 +999,41 @@
                 hairstyle: null,
                 inspirationPhotos: []
             };
-            document.querySelectorAll('.service.selected').forEach(el => el.classList.remove('selected'));
             document.getElementById('dry-cut-upload').classList.add('hidden');
             document.getElementById('hairstyle-upload').classList.add('hidden');
-            document.getElementById('appointment-date').value = formattedToday; // Reset to today's date
-            document.getElementById('form-time').value = '';
-            document.getElementById('name').value = '';
-            document.getElementById('phone').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('afro-hair').value = 'no';
-            document.getElementById('payment-method').value = '';
-            document.getElementById('payment-proof').value = '';
+            document.getElementById('total-display').innerHTML = 'Total: 0 EGP | Required Deposit: 0 EGP';
+            document.getElementById('form-services').value = '';
+            document.getElementById('form-total').value = '';
+            
+            // Clear selected time slot
+            const selectedTimeSlot = timeSlotsContainer.querySelector('.time-slot.selected');
+            if (selectedTimeSlot) {
+                selectedTimeSlot.classList.remove('selected');
+            }
+            
+            // Clear file inputs and gallery
             hairstylePhotoInput.value = '';
             dryCutPhotoInput.value = '';
+            document.getElementById('payment-proof').value = '';
             inspirationGallery.innerHTML = '';
-            updateTotal();
         }
 
-        // Select time slot
-        function selectTimeSlot(element, time) {
-            const currentSelected = document.querySelector('.time-slot.selected');
-            if (currentSelected) {
-                currentSelected.classList.remove('selected');
-            }
-            element.classList.add('selected');
-            booking.time = time;
-            document.getElementById('form-time').value = time;
-        }
-
-        // Load available time slots for booking
-        function loadAvailableTimeSlots() {
-            timeSlotsContainer.innerHTML = '';
-            const selectedDate = appointmentDateInput.value;
-
-            // No need for this check (removed the conditional note) as appointmentDateInput.value is always set to today
-            // if (!selectedDate) {
-            //     timeSlotsContainer.innerHTML = '<div class="note">Please select a date to see available time slots.</div>';
-            //     return;
-            // }
-
-            const slotsForDate = adminData.availableSlots.filter(slot => slot.date === selectedDate);
-            const bookedSlotsForDate = adminData.appointments.filter(app => app.date === selectedDate).map(app => app.time);
-
-            if (slotsForDate.length === 0) {
-                timeSlotsContainer.innerHTML = '<div class="note">No slots available for this date. Please choose another date.</div>';
-                return;
-            }
-
-            slotsForDate.sort((a, b) => {
-                const timeA = new Date(`2000/01/01 ${a.time}`);
-                const timeB = new Date(`2000/01/01 ${b.time}`);
-                return timeA - timeB;
-            });
-
-            slotsForDate.forEach(slot => {
-                const isBooked = bookedSlotsForDate.includes(slot.time);
-                const div = document.createElement('div');
-                div.classList.add('time-slot');
-                if (isBooked) {
-                    div.classList.add('booked');
-                    div.title = 'This slot is already booked.';
-                } else {
-                    div.onclick = () => selectTimeSlot(div, slot.time);
-                }
-                div.textContent = slot.time;
-                timeSlotsContainer.appendChild(div);
-            });
-        }
-
-        // Event listener for date input change
-        appointmentDateInput.addEventListener('change', loadAvailableTimeSlots);
-
-        // Confirm booking
-        function confirmBooking() {
-            // Basic client-side validation
-            if (booking.services.length === 0 && !booking.hairstyle) {
-                alert('Please select at least one service or a custom hairstyle.');
-                return false;
-            }
-            if (booking.hairstyle && hairstylePhotoInput.files.length === 0) {
-                alert('Please upload an inspiration photo for your Custom Hairstyle.');
-                return false;
-            }
-            // Check if a time slot has been selected
-            if (!booking.time) { // Changed this to check booking.time directly
-                alert('Please select a time for your appointment.');
-                return false;
-            }
-            if (!document.getElementById('name').value || !document.getElementById('phone').value || !document.getElementById('email').value || !document.getElementById('payment-method').value) {
-                alert('Please fill in all your information.');
-                return false;
-            }
-            if (document.getElementById('payment-proof').files.length === 0) {
-                alert('Please upload your payment screenshot.');
-                return false;
-            }
-
-            // Add selected photos to form data as files
-            const form = document.querySelector('#step2 form');
-            booking.inspirationPhotos.forEach((photo, index) => {
-                // You'll need to convert Data URL to a File object if you want to submit it directly via FormData
-                // For simplicity here, we're assuming the formsubmit.co handles data URLs or you might upload via AJAX.
-                // For standard form submission with `enctype="multipart/form-data"`, you generally attach File objects.
-                // A common way to handle this is to re-append the original file input, or use FormData with fetch.
-                // For now, we'll rely on the original file inputs if they were chosen, and a hidden field for the names.
-                // If you are using FormSubmit, their service might be able to process base64 data, but direct file upload is more robust.
-                // If you want to actually send the data URL, you'd add a hidden input for it.
-                // form.innerHTML += `<input type="hidden" name="inspiration_photo_${index}" value="${photo.src}">`;
-                // form.innerHTML += `<input type="hidden" name="inspiration_photo_name_${index}" value="${photo.name}">`;
-            });
-            
-            // For FormSubmit to receive the files, they need to be directly attached to the form as file inputs.
-            // This is done by the existing input fields: dry-cut-photo and hairstyle-photo.
-            // If there were multiple inspiration photos selected, you'd need to create new file inputs or send via AJAX.
-            // For this setup, we'll assume only the primary dry-cut-photo and hairstyle-photo inputs are used for submission.
-
-            // Add the booking to admin data if successful (simulated)
-            const newAppointment = {
-                id: Date.now(), // Simple unique ID
-                date: booking.date,
-                time: booking.time,
-                clientName: document.getElementById('name').value,
-                services: booking.services.map(s => s.name).join(', ') + (booking.hairstyle ? `, ${booking.hairstyle.name}` : ''),
-                total: document.getElementById('form-total').value,
-                completed: false
-            };
-            adminData.appointments.push(newAppointment);
-            saveAdminData(); // Save to local storage
-
-            showSection('confirmation');
-            return true; // Allow form submission to FormSubmit.co
-        }
-
-        // Admin Panel Functions
+        // --- Admin Panel Functions ---
 
         // Toggle admin modal
         function toggleAdminModal() {
             adminModal.classList.toggle('active');
-            if (adminModal.classList.contains('active') && !adminData.loggedIn) {
-                adminLogin.classList.remove('hidden');
-                adminContent.classList.add('hidden');
-            } else if (adminData.loggedIn) {
-                adminLogin.classList.add('hidden');
-                adminContent.classList.remove('hidden');
-                loadAdminAppointments();
-                loadAdminAvailableSlots();
+            if (adminModal.classList.contains('active')) {
+                // If opening, check login state
+                if (adminData.loggedIn) {
+                    adminLogin.classList.add('hidden');
+                    adminContent.classList.remove('hidden');
+                    loadAppointments();
+                    loadAvailableAdminSlots();
+                } else {
+                    adminLogin.classList.remove('hidden');
+                    adminContent.classList.add('hidden');
+                }
             }
         }
 
@@ -1116,12 +1043,10 @@
             const password = document.getElementById('admin-password').value;
             if (password === adminData.adminPassword) {
                 adminData.loggedIn = true;
-                saveAdminData();
                 adminLogin.classList.add('hidden');
                 adminContent.classList.remove('hidden');
-                loadAdminAppointments();
-                loadAdminAvailableSlots();
-                alert('Admin login successful!');
+                loadAppointments();
+                loadAvailableAdminSlots();
             } else {
                 alert('Incorrect password!');
             }
@@ -1129,57 +1054,45 @@
 
         // Admin logout
         function adminLogout() {
-            if (confirm('Are you sure you want to log out?')) {
-                adminData.loggedIn = false;
-                saveAdminData();
-                toggleAdminModal();
-                document.getElementById('admin-password').value = '';
-                alert('Logged out successfully.');
-            }
+            adminData.loggedIn = false;
+            adminLogin.classList.remove('hidden');
+            adminContent.classList.add('hidden');
+            document.getElementById('admin-password').value = '';
         }
 
         // Show admin tabs
         function showAdminTab(tabId) {
             document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.add('hidden'));
-            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabId).classList.remove('hidden');
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.admin-tab-btn[onclick*="${tabId}"]`).classList.add('active');
-
+            
             if (tabId === 'view-appointments') {
-                loadAdminAppointments();
+                loadAppointments();
             } else if (tabId === 'manage-slots') {
-                loadAdminAvailableSlots();
+                loadAvailableAdminSlots();
             }
         }
 
-        // Load admin appointments
-        function loadAdminAppointments() {
+        // Load appointments (dummy data)
+        function loadAppointments() {
+            // In a real application, you'd fetch this from a database
+            adminData.appointments = [
+                { id: 1, date: '2025-05-22', time: '10:00 AM', client: 'Jane Doe', services: ['Dry Cut', 'Ear Length Hair'], total: 450, completed: false },
+                { id: 2, date: '2025-05-23', time: '1:00 PM', client: 'John Smith', services: ['Custom Hairstyle'], total: 500, completed: false },
+                { id: 3, date: '2025-05-21', time: '12:00 PM', client: 'Alice Brown', services: ['Shoulder Length Hair'], total: 350, completed: true }
+            ];
+
             appointmentsTable.innerHTML = '';
-            // Sort appointments by date and then time
-            const sortedAppointments = [...adminData.appointments].sort((a, b) => {
-                const dateA = new Date(a.date + ' ' + a.time);
-                const dateB = new Date(b.date + ' ' + b.time);
-                return dateA - dateB;
-            });
-
-            if (sortedAppointments.length === 0) {
-                appointmentsTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">No appointments yet.</td></tr>';
-                return;
-            }
-
-            sortedAppointments.forEach(app => {
+            adminData.appointments.forEach(app => {
                 const row = appointmentsTable.insertRow();
-                if (app.completed) {
-                    row.classList.add('completed');
-                }
+                row.classList.toggle('completed', app.completed);
                 row.innerHTML = `
-                    <td>
-                        <input type="checkbox" class="completed-checkbox" ${app.completed ? 'checked' : ''} onchange="toggleAppointmentCompleted(${app.id})">
-                    </td>
+                    <td><input type="checkbox" class="completed-checkbox" ${app.completed ? 'checked' : ''} onchange="toggleAppointmentCompleted(${app.id}, this.checked)"></td>
                     <td>${app.date}</td>
                     <td>${app.time}</td>
-                    <td>${app.clientName}</td>
-                    <td>${app.services}</td>
+                    <td>${app.client}</td>
+                    <td>${app.services.join(', ')}</td>
                     <td>${app.total} EGP</td>
                     <td class="action-btns">
                         <button class="btn btn-danger btn-sm" onclick="deleteAppointment(${app.id})">
@@ -1191,12 +1104,11 @@
         }
 
         // Toggle appointment completed status
-        function toggleAppointmentCompleted(id) {
-            const index = adminData.appointments.findIndex(app => app.id === id);
-            if (index !== -1) {
-                adminData.appointments[index].completed = !adminData.appointments[index].completed;
-                saveAdminData();
-                loadAdminAppointments(); // Reload to update UI
+        function toggleAppointmentCompleted(id, isCompleted) {
+            const appointment = adminData.appointments.find(app => app.id === id);
+            if (appointment) {
+                appointment.completed = isCompleted;
+                loadAppointments(); // Re-render table
             }
         }
 
@@ -1204,144 +1116,168 @@
         function deleteAppointment(id) {
             if (confirm('Are you sure you want to delete this appointment?')) {
                 adminData.appointments = adminData.appointments.filter(app => app.id !== id);
-                saveAdminData();
-                loadAdminAppointments();
+                loadAppointments(); // Re-render table
             }
         }
 
-        // Load admin available slots
-        function loadAdminAvailableSlots() {
-            availableSlotsContainer.innerHTML = '';
-            if (adminData.availableSlots.length === 0) {
-                availableSlotsContainer.innerHTML = '<div class="note">No available slots added yet.</div>';
-                return;
-            }
-
-            // Group slots by date and sort
-            const groupedSlots = adminData.availableSlots.reduce((acc, slot) => {
-                if (!acc[slot.date]) {
-                    acc[slot.date] = [];
-                }
-                acc[slot.date].push(slot.time);
-                return acc;
-            }, {});
-
-            const sortedDates = Object.keys(groupedSlots).sort();
-
-            sortedDates.forEach(date => {
-                const dateHeader = document.createElement('h4');
-                dateHeader.textContent = date;
-                availableSlotsContainer.appendChild(dateHeader);
-
-                const timeSlotsDiv = document.createElement('div');
-                timeSlotsDiv.classList.add('time-slots');
-
-                groupedSlots[date].sort((a, b) => {
-                    const timeA = new Date(`2000/01/01 ${a}`);
-                    const timeB = new Date(`2000/01/01 ${b}`);
-                    return timeA - timeB;
-                }).forEach(time => {
-                    const div = document.createElement('div');
-                    div.classList.add('time-slot');
-                    div.textContent = time;
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.classList.add('btn', 'btn-danger', 'btn-sm');
-                    deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
-                    deleteBtn.onclick = () => deleteSlot(date, time);
-                    div.appendChild(deleteBtn);
-                    timeSlotsDiv.appendChild(div);
-                });
-                availableSlotsContainer.appendChild(timeSlotsDiv);
-            });
-        }
-
-        // Add a standard slot
+        // Add standard slot
         addSlotForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const date = document.getElementById('slot-date').value;
             const time = document.getElementById('slot-time').value;
-
-            if (!date || !time) {
+            
+            if (date && time) {
+                addTimeSlotToAdminData(date, time);
+                alert('Time slot added!');
+                loadAvailableAdminSlots();
+            } else {
                 alert('Please select both date and time.');
-                return;
             }
-
-            // Check if slot already exists
-            if (adminData.availableSlots.some(slot => slot.date === date && slot.time === time)) {
-                alert('This slot already exists.');
-                return;
-            }
-
-            adminData.availableSlots.push({ date, time });
-            saveAdminData();
-            loadAdminAvailableSlots();
-            alert('Time slot added!');
-            addSlotForm.reset();
         });
 
-        // Add a manual slot
+        // Add manual slot
         function addManualSlot() {
             const date = document.getElementById('manual-date').value;
             const time = document.getElementById('manual-time').value;
 
-            if (!date || !time) {
-                alert('Please enter both date and time for the manual slot.');
-                return;
+            if (date && time) {
+                // Basic format validation for time (HH:MM)
+                if (!/^\d{2}:\d{2}$/.test(time)) {
+                    alert('Please enter time in HH:MM format (e.g., 14:30).');
+                    return;
+                }
+                // Convert to AM/PM for display if needed, but store consistently.
+                // For simplicity, let's just store HH:MM and assume 24-hour for now.
+                // Or you can convert to 12-hour format if your app primarily uses that.
+                
+                // For this example, let's convert it to a standard AM/PM format to match existing data
+                const [hours, minutes] = time.split(':');
+                let formattedTime = '';
+                const h = parseInt(hours, 10);
+                if (h === 0) {
+                    formattedTime = `12:${minutes} AM`;
+                } else if (h === 12) {
+                    formattedTime = `12:${minutes} PM`;
+                } else if (h < 12) {
+                    formattedTime = `${h}:${minutes} AM`;
+                } else {
+                    formattedTime = `${h - 12}:${minutes} PM`;
+                }
+
+                addTimeSlotToAdminData(date, formattedTime);
+                alert('Manual time slot added!');
+                loadAvailableAdminSlots();
+                document.getElementById('manual-date').value = '';
+                document.getElementById('manual-time').value = '';
+            } else {
+                alert('Please enter both date and time.');
             }
-
-            // Convert time to AM/PM format (optional, but good for consistency if standard times are AM/PM)
-            let [hours, minutes] = time.split(':');
-            let ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12; // the hour '0' should be '12'
-            const formattedTime = `${hours}:${minutes} ${ampm}`;
-
-            // Check if slot already exists
-            if (adminData.availableSlots.some(slot => slot.date === date && slot.time === formattedTime)) {
-                alert('This slot already exists.');
-                return;
-            }
-
-            adminData.availableSlots.push({ date, time: formattedTime });
-            saveAdminData();
-            loadAdminAvailableSlots();
-            alert('Manual time slot added!');
-            document.getElementById('manual-date').value = '';
-            document.getElementById('manual-time').value = '';
         }
 
+        function addTimeSlotToAdminData(date, time) {
+             // Check for duplicates before adding
+            const isDuplicate = adminData.availableSlots.some(slot => slot.date === date && slot.time === time);
+            if (!isDuplicate) {
+                adminData.availableSlots.push({ date: date, time: time, booked: false });
+            } else {
+                alert('This time slot already exists for this date.');
+            }
+        }
 
-        // Delete an available slot
-        function deleteSlot(date, time) {
-            if (confirm(`Are you sure you want to delete the slot: ${date} at ${time}?`)) {
+        // Load available slots in admin panel
+        function loadAvailableAdminSlots() {
+            // Sort slots by date and then time
+            adminData.availableSlots.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                if (dateA.getTime() === dateB.getTime()) {
+                    // Simple string comparison for time, might need more robust parsing for 24hr vs AM/PM
+                    return a.time.localeCompare(b.time);
+                }
+                return dateA - dateB;
+            });
+
+            availableSlotsContainer.innerHTML = '';
+            if (adminData.availableSlots.length === 0) {
+                availableSlotsContainer.innerHTML = '<p>No available slots configured. Add some above!</p>';
+                return;
+            }
+
+            adminData.availableSlots.forEach(slot => {
+                const slotElement = document.createElement('div');
+                slotElement.classList.add('time-slot');
+                slotElement.classList.toggle('booked', slot.booked); // Use 'booked' class for visual
+                slotElement.textContent = `${slot.date} ${slot.time}`;
+                
+                // Add a delete button for admin
+                const deleteBtn = document.createElement('button');
+                deleteBtn.classList.add('btn', 'btn-danger', 'btn-sm');
+                deleteBtn.style.marginLeft = '10px';
+                deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+                deleteBtn.onclick = () => deleteAdminSlot(slot.date, slot.time);
+                
+                slotElement.appendChild(deleteBtn);
+                availableSlotsContainer.appendChild(slotElement);
+            });
+        }
+
+        // Delete slot from admin view
+        function deleteAdminSlot(date, time) {
+            if (confirm(`Are you sure you want to delete the slot: ${date} ${time}?`)) {
                 adminData.availableSlots = adminData.availableSlots.filter(slot => !(slot.date === date && slot.time === time));
-                saveAdminData();
-                loadAdminAvailableSlots();
+                loadAvailableAdminSlots();
             }
         }
 
-        // Local Storage Functions
-        function saveAdminData() {
-            localStorage.setItem('curlsbycarine_admin_data', JSON.stringify(adminData));
-        }
+        // Initial load of services when page loads (if section is not home by default)
+        // This is usually done when navigating to the booking page via showSection('booking')
+        // For direct load on page, if booking section is visible initially, you'd call it.
+        // loadServices(); // Do not call here, let showSection handle it on navigation
 
-        function loadAdminData() {
-            const storedData = localStorage.getItem('curlsbycarine_admin_data');
-            if (storedData) {
-                adminData = JSON.parse(storedData);
+        // Optional: Pre-populate some dummy slots for admin initially
+        // This is for demonstration; in real app, fetch from backend.
+        adminData.availableSlots = [
+            { date: formattedToday, time: '10:00 AM', booked: false },
+            { date: formattedToday, time: '12:00 PM', booked: false },
+            { date: formattedToday, time: '4:00 PM', booked: false },
+            { date: '2025-05-23', time: '11:00 AM', booked: false },
+            { date: '2025-05-23', time: '1:00 PM', booked: false }
+        ];
+
+        // Example of adding image upload preview (for inspiration photos)
+        function handlePhotoUpload(input, galleryId) {
+            const gallery = document.getElementById(galleryId);
+            gallery.innerHTML = ''; // Clear existing
+            
+            if (input.files.length > 0) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const item = document.createElement('div');
+                        item.classList.add('inspiration-item');
+                        item.innerHTML = `
+                            <img src="${e.target.result}" alt="Inspiration Photo">
+                            <button class="delete-btn" onclick="removePhoto(this, '${input.id}', '${galleryId}')"><i class="fas fa-times"></i></button>
+                        `;
+                        gallery.appendChild(item);
+                    };
+                    reader.readAsDataURL(file);
+                });
             }
         }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadAdminData();
-            showSection('home'); // Show home section by default
-            // If logged in, ensure admin content is visible if modal is toggled
-            if (adminData.loggedIn) {
-                adminLogin.classList.add('hidden');
-                adminContent.classList.remove('hidden');
-            }
-        });
+        dryCutPhotoInput.addEventListener('change', () => handlePhotoUpload(dryCutPhotoInput, 'inspiration-gallery'));
+        hairstylePhotoInput.addEventListener('change', () => handlePhotoUpload(hairstylePhotoInput, 'inspiration-gallery'));
+
+        function removePhoto(buttonElement, inputId, galleryId) {
+            const input = document.getElementById(inputId);
+            const gallery = document.getElementById(galleryId);
+            
+            // Clear the file input and the gallery item
+            input.value = ''; // This clears the selected file(s) from the input
+            buttonElement.closest('.inspiration-item').remove();
+        }
+
     </script>
 </body>
-                        </html>
+                                                                                       </html>
