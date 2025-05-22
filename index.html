@@ -539,8 +539,9 @@
                         <input type="hidden" name="_autoresponse" value="Thank you for your booking! We'll contact you soon to confirm your appointment. 💇‍♀️">
                         <input type="hidden" name="_template" value="table">
                         <input type="hidden" name="_sender_name" value="Curls by Carine"> 
-                        <input type="hidden" name="services" id="form-services">
+                        <input type="hidden" name="_next" value="https://yourwebsite.com/thankyou.html"> <input type="hidden" name="services" id="form-services">
                         <input type="hidden" name="total" id="form-total">
+                        <input type="hidden" name="booked_date" id="form-booked-date">
                         <input type="hidden" name="booked_time_slot" id="form-booked-time-slot">
                         
                         <h3>Select Date & Time</h3>
@@ -603,6 +604,7 @@
                     <i class="fas fa-check-circle" style="font-size: 3.125rem; color: var(--secondary);"></i> <h3>Booking Confirmed!</h3>
                     <p>We've received your appointment request. We'll contact you shortly to confirm.</p>
                     <p>Thank you for choosing Curls by Carine!</p>
+                    <button class="btn" onclick="showSection('home');">Done</button>
                 </div>
             </div>
             
@@ -780,6 +782,7 @@
             document.getElementById('home').classList.add('hidden');
             document.getElementById('services').classList.add('hidden');
             document.getElementById('booking').classList.add('hidden');
+            document.getElementById('confirmation').classList.add('hidden'); // Ensure confirmation is hidden
             document.getElementById(sectionId).classList.remove('hidden');
             
             if (sectionId === 'booking') {
@@ -1044,25 +1047,31 @@
                     return parseTime(a.time) - parseTime(b.time);
                 });
 
+            if (slotsToDisplay.length === 0) {
+                timeSlotsContainer.innerHTML = '<p>No available slots for this date. Please choose another date or check back later.</p>';
+                return;
+            }
+
             slotsToDisplay.forEach(slot => {
-                const slotDateTime = new Date(`${selectedDate}T${slot.time.replace(' AM', '').replace(' PM', '').replace(' ', '')}`); // Create a Date object for comparison
-                const isPast = selectedDate === todayFormatted && slotDateTime <= now; // Check if the slot is in the past today
+                // Create a Date object for comparison to current time
+                // Replace ' AM', ' PM' and ' ' with empty string to get HH:MM format suitable for Date constructor
+                const slotDateTime = new Date(`${selectedDate}T${slot.time.replace(' AM', '').replace(' PM', '')}`);
+                
+                // Determine if the slot is in the past
+                const isPast = (selectedDate === todayFormatted && slotDateTime <= now);
 
                 const div = document.createElement('div');
                 div.classList.add('time-slot');
                 if (isPast || slot.booked) { // If slot is in the past OR explicitly booked
                     div.classList.add('booked');
                     div.textContent = `${slot.time} (${isPast ? 'Past' : 'Booked'})`;
+                    // Do not allow clicking for past or booked slots
                 } else {
                     div.textContent = slot.time;
                     div.onclick = () => selectTimeSlot(div, slot.time); // Only allow selection if not past or booked
                 }
                 timeSlotsContainer.appendChild(div);
             });
-
-            if (timeSlotsContainer.innerHTML === '') {
-                timeSlotsContainer.innerHTML = '<p>No available slots for this date.</p>';
-            }
         }
 
         function selectTimeSlot(element, time) {
@@ -1074,40 +1083,39 @@
             // Add 'selected' class to the clicked slot
             element.classList.add('selected');
             booking.time = time;
-            document.getElementById('form-time').value = time; // Update hidden form field
+            document.getElementById('form-booked-time-slot').value = time; // Update hidden form field
+            document.getElementById('form-booked-date').value = appointmentDateInput.value; // Update hidden form field
         }
 
         // --- Booking Form Submission ---
-        bookingForm.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Prevent default form submission initially
+        bookingForm.addEventListener('submit', function(e) {
+            // No e.preventDefault() here to allow FormSubmit.co to work directly
+            // No async/await or fetch needed for direct form submission
 
             if (!booking.time) {
                 alert('Please select an appointment time before confirming your booking.');
+                e.preventDefault(); // Prevent form submission
                 return;
             }
             if (document.getElementById('payment-proof').files.length === 0) {
                 alert('Please upload a payment screenshot to confirm your booking.');
+                e.preventDefault(); // Prevent form submission
                 return;
             }
 
-            // Gather all form data
-            const formData = new FormData(bookingForm);
-            formData.append('selected_services', document.getElementById('form-services').value);
-            formData.append('total_price', document.getElementById('form-total').value);
-            formData.append('booked_date', appointmentDateInput.value);
-            formData.append('booked_time', booking.time);
+            // Gather all form data elements that need to be hidden/pre-filled
+            // These will be appended as hidden inputs or directly set on existing inputs
+            document.getElementById('form-services').value = JSON.stringify(booking.services.map(s => s.name).concat(booking.hairstyle ? [booking.hairstyle.name] : []));
+            document.getElementById('form-total').value = document.getElementById('total-display').textContent.split('|')[0].replace('Total: ', '').replace(' EGP', '').trim(); // Extract total value
+
+            // Add inspiration photos to formData manually as hidden inputs for FormSubmit.co
+            // Note: FormSubmit.co handles actual file uploads when enctype is set to multipart/form-data
+            // We just ensure the <input type="file"> elements are named correctly.
+            // The existing file inputs (`hairstyle-photo`, `dry-cut-photo`, `payment-proof`)
+            // are already part of the form and will be sent.
             
-            // Add inspiration photos to formData for FormSubmit.co
-            booking.inspirationPhotos.forEach((photo, index) => {
-                formData.append(`inspiration_photo_${photo.type}_${index}`, photo.file);
-            });
-
-            // Add payment proof file to formData
-            if (document.getElementById('payment-proof').files.length > 0) {
-                formData.append('payment_screenshot', document.getElementById('payment-proof').files[0]);
-            }
-
-            // Store the booking in adminData
+            // Store the booking in adminData *before* submitting the form
+            // This ensures local storage is updated even if FormSubmit.co has issues.
             const newAppointment = {
                 id: Date.now(), // Unique ID for the appointment
                 date: appointmentDateInput.value,
@@ -1121,57 +1129,29 @@
                 total: parseFloat(document.getElementById('form-total').value),
                 completed: false, // New appointments are not completed by default
                 paymentProofUploaded: document.getElementById('payment-proof').files.length > 0,
-                // In a real app, you'd store references to uploaded images here, not the files themselves
-                // For FormSubmit, we'll indicate if files were sent.
                 hasDryCutPhoto: dryCutPhotoInput.files.length > 0,
                 hasHairstylePhoto: hairstylePhotoInput.files.length > 0
             };
             adminData.appointments.push(newAppointment);
 
             // Mark the slot as booked in adminData.availableSlots
-            const bookedSlotIndex = adminData.availableSlots.findIndex(slot => 
+            const bookedSlot = adminData.availableSlots.find(slot => 
                 slot.date === newAppointment.date && slot.time === newAppointment.time && !slot.booked
             );
-            if (bookedSlotIndex !== -1) {
-                adminData.availableSlots[bookedSlotIndex].booked = true;
+            if (bookedSlot) {
+                bookedSlot.booked = true;
             }
 
             saveAdminData(); // Save updated adminData to localStorage (this also reloads client slots)
 
-            // Now, submit the form to FormSubmit.co
-            try {
-                const response = await fetch(bookingForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json' // Ensure FormSubmit.co responds with JSON
-                    }
-                });
-
-                if (response.ok) {
-                    showSection('confirmation');
-                    resetBooking(); // Clear client-side booking data after successful submission
-                    // loadAvailableTimeSlots() is called by saveAdminData()
-                } else {
-                    alert('There was an error submitting your booking. Please try again. If the problem persists, please contact us directly.');
-                    console.error('FormSubmit error:', await response.json());
-                    // If submission fails, revert changes to adminData locally as the booking wasn't sent
-                    adminData.appointments.pop(); // Remove the added appointment
-                    if (bookedSlotIndex !== -1) {
-                        adminData.availableSlots[bookedSlotIndex].booked = false; // Unmark slot
-                    }
-                    saveAdminData(); // Save reverted state
-                }
-            } catch (error) {
-                alert('There was a network error. Please check your internet connection and try again.');
-                console.error('Network error:', error);
-                // Revert changes if network error
-                adminData.appointments.pop();
-                if (bookedSlotIndex !== -1) {
-                    adminData.availableSlots[bookedSlotIndex].booked = false;
-                }
-                saveAdminData(); // Save reverted state
-            }
+            // After successful local storage update, show confirmation message
+            // FormSubmit.co will handle the actual email sending and redirect
+            // If you set _next in FormSubmit.co, this confirmation won't be seen.
+            // For now, we'll keep it as a fallback.
+            showSection('confirmation'); 
+            
+            resetBooking(); // Clear client-side booking data after submission
+            // Form submission will proceed naturally here.
         });
 
 
@@ -1261,7 +1241,7 @@
             adminData.availableSlots.push(newSlot);
             saveAdminData(); // This will also call loadAvailableTimeSlots() for client view
             renderAdminAvailableSlots(); // Update admin view
-            document.getElementById('manual-date').value = formattedToday; // Reset date
+            document.getElementById('manual-date').value = formattedToday; // Reset date to today
             document.getElementById('manual-time').value = ''; // Clear time
             alert('Manual slot added successfully!');
         }
@@ -1294,7 +1274,11 @@
         });
 
         function deleteSlot(index) {
-            if (confirm('Are you sure you want to delete this time slot? This cannot be undone.')) {
+            // IMPORTANT: If you delete an available slot, and an appointment was booked on it,
+            // that appointment will still exist in `adminData.appointments`.
+            // The system doesn't automatically unbook an appointment if its slot is deleted.
+            // This is a limitation of client-side localStorage management.
+            if (confirm('Are you sure you want to delete this time slot? This cannot be undone. If an appointment was booked on this slot, it will NOT be automatically unbooked.')) {
                 adminData.availableSlots.splice(index, 1);
                 saveAdminData(); // This will also call loadAvailableTimeSlots() for client view
                 renderAdminAvailableSlots(); // Update admin view
@@ -1379,11 +1363,21 @@
         }
 
         function deleteAppointment(index) {
-            if (confirm('Are you sure you want to delete this appointment? This action cannot be undone and WILL NOT automatically unbook the time slot. You must manually unbook the slot if desired.')) {
+            if (confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
+                // When an appointment is deleted, also unmark its corresponding slot as booked
+                const deletedAppointment = adminData.appointments[index];
+                const correspondingSlot = adminData.availableSlots.find(slot => 
+                    slot.date === deletedAppointment.date && slot.time === deletedAppointment.time && slot.booked
+                );
+                if (correspondingSlot) {
+                    correspondingSlot.booked = false; // Make the slot available again
+                }
+
                 adminData.appointments.splice(index, 1);
-                saveAdminData(); // Save the updated appointments list
-                renderAppointments(); // Re-render to update UI
-                alert('Appointment deleted.');
+                saveAdminData(); // Save the updated lists
+                renderAppointments(); // Re-render appointments table
+                renderAdminAvailableSlots(); // Re-render available slots in admin to reflect unbooked slot
+                alert('Appointment deleted, and its time slot is now available again.');
             }
         }
     </script>
