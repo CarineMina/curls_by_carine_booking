@@ -1,71 +1,487 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curls by Carine - Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000;
+            --secondary: #D4AF37;
+            --light: #f8f5f0;
+            --white: #fff;
+            --gray: #eee;
+            --dark-gray: #777;
+            --danger: #dc3545;
+            --success: #28a745;
+        }
+        
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: var(--light);
+            color: var(--primary);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+        
+        header {
+            background: var(--primary);
+            color: var(--secondary);
+            text-align: center;
+            padding: 20px;
+            border-bottom: 3px solid var(--secondary);
+        }
+        
+        .logo {
+            max-width: 150px;
+            margin-bottom: 10px;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+            padding: 6px 10px;
+            margin: 3px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 0.8em;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+            border-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background: var(--white);
+            color: var(--danger);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+            border-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background: var(--white);
+            color: var(--success);
+        }
+        
+        .btn-sm {
+            padding: 3px 6px;
+            font-size: 0.7em;
+            margin: 1px;
+        }
+        
+        section {
+            background: var(--white);
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .service {
+            border: 1px solid var(--secondary);
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .service:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .service.selected {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+        
+        .price {
+            color: var(--secondary);
+            font-weight: bold;
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 20px;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        
+        .time-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .time-slot {
+            padding: 6px 10px;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.8em;
+        }
+        
+        .time-slot:hover {
+            transform: scale(1.05);
+        }
+        
+        .time-slot.selected {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+        
+        .time-slot.booked {
+            background: var(--danger);
+            color: var(--white);
+            border-color: var(--danger);
+            cursor: not-allowed;
+        }
+        
+        .total-price {
+            font-weight: bold;
+            color: var(--secondary);
+            margin: 20px 0;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .note {
+            color: var(--secondary);
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: rgba(212, 175, 55, 0.1);
+            border-radius: 5px;
+        }
+        
+        .confirmation-message {
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(212, 175, 55, 0.1);
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .inspiration-upload {
+            margin: 15px 0;
+            padding: 10px;
+            background: var(--light);
+            border-radius: 5px;
+        }
+        
+        .inspiration-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .inspiration-item {
+            position: relative;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .inspiration-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .inspiration-item .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--primary);
+            color: var(--secondary);
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+        }
+        
+        /* Admin Panel Styles */
+        .admin-lock {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border: 2px solid var(--secondary);
+        }
+        
+        .admin-lock:hover {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+        
+        .admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .admin-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .admin-container {
+            background: var(--white);
+            width: 90%;
+            max-width: 800px;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 2px solid var(--secondary);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .admin-tab-btn {
+            padding: 6px 10px;
+            background: var(--primary);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.2s ease;
+        }
+        
+        .admin-tab-btn:hover, .admin-tab-btn.active {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+        
+        .admin-tab {
+            display: none;
+        }
+        
+        .admin-tab.active {
+            display: block;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--secondary);
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: var(--secondary);
+        }
+        
+        tr:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .completed-checkbox {
+            transform: scale(1.3);
+            margin-right: 5px;
+        }
+        
+        .completed {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        .manual-entry {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .manual-entry input {
+            flex: 1;
+            margin: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .btn {
+                display: block;
+                width: 100%;
+                margin: 8px 0;
+            }
+            
+            .time-slots {
+                justify-content: center;
+            }
+            
+            .inspiration-gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .action-btns {
+                flex-direction: column;
+            }
+            
+            .admin-container {
+                padding: 15px;
+            }
+            
+            .manual-entry {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+    <!-- أضيفي هذا الكود قبل </body> -->
 <script>
-    // Admin Login System (Simple Password)
-    const ADMIN_PASSWORD = "CurlsByCarine123"; // Change this to a strong password
+    // نظام تسجيل دخول الإدمين (كلمة مرور بسيطة)
+    const ADMIN_PASSWORD = "CurlsByCarine123"; // غيّريها لكلمة سر قوية
     let isAdminLoggedIn = false;
 
     function showAdminLogin() {
-        const password = prompt("Enter admin password:");
+        const password = prompt("أدخل كلمة مرور الإدمين:");
         if (password === ADMIN_PASSWORD) {
             isAdminLoggedIn = true;
             showAdminPanel();
         } else {
-            alert("Incorrect password");
+            alert("كلمة المرور غير صحيحة");
         }
     }
 
     function showAdminPanel() {
         if (!isAdminLoggedIn) return;
         
-        // Create Admin Interface
+        // إنشاء واجهة الإدمين
         const adminHTML = `
             <div id="admin-panel" style="position:fixed; top:20px; right:20px; z-index:1000; background:white; padding:20px; border:2px solid var(--secondary); border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.2); max-width:400px;">
-                <h2 style="color:var(--secondary); margin-top:0;">Admin Panel</h2>
+                <h2 style="color:var(--secondary); margin-top:0;">لوحة التحكم</h2>
                 
-                <h3>Manage Appointments</h3>
+                <h3>إدارة المواعيد</h3>
                 <div style="margin-bottom:15px;">
-                    <label>New Date:</label>
+                    <label>تاريخ جديد:</label>
                     <input type="date" id="new-admin-date" style="width:100%; padding:8px; margin:5px 0;">
                 </div>
                 
                 <div style="margin-bottom:15px;">
-                    <label>New Times (comma-separated):</label>
+                    <label>مواعيد جديدة (افصل بينها بفاصلة):</label>
                     <input type="text" id="new-admin-times" placeholder="2:00 PM, 4:00 PM" style="width:100%; padding:8px; margin:5px 0;">
                 </div>
                 
                 <button onclick="addAdminTimes()" class="btn" style="margin-right:5px;">
-                    <i class="fas fa-plus"></i> Add Times
+                    <i class="fas fa-plus"></i> إضافة مواعيد
                 </button>
                 <button onclick="document.getElementById('admin-panel').remove()" class="btn">
-                    <i class="fas fa-times"></i> Close
+                    <i class="fas fa-times"></i> إغلاق
                 </button>
                 
                 <hr style="margin:15px 0; border-color:var(--secondary);">
                 
-                <h3>Current Available Times</h3>
+                <h3>المواعيد المتاحة حالياً</h3>
                 <div id="current-times-list" style="max-height:200px; overflow-y:auto; margin-bottom:15px;">
-                    </div>
+                    <!-- المواعيد الحالية تظهر هنا -->
+                </div>
                 
                 <button onclick="clearAllTimes()" class="btn" style="background:#ff4444; border-color:#ff4444;">
-                    <i class="fas fa-trash"></i> Clear All Times
+                    <i class="fas fa-trash"></i> مسح جميع المواعيد
                 </button>
             </div>
         `;
         
-        // Add the interface to the page
+        // إضافة الواجهة إلى الصفحة
         document.body.insertAdjacentHTML('beforeend', adminHTML);
         loadCurrentTimes();
     }
 
-    // Function to load current times
+    // دالة لتحميل المواعيد الحالية
     function loadCurrentTimes() {
         const timesList = document.getElementById('current-times-list');
         timesList.innerHTML = '';
         
-        // You can replace this with fetching data from a database if you're using one
+        // يمكنك استبدال هذا بجلب البيانات من قاعدة بيانات إذا كنتِ تستخدمينها
         const currentTimes = ['10:00 AM', '12:00 PM', '2:00 PM', '4:00 PM'];
         
         if (currentTimes.length === 0) {
-            timesList.innerHTML = '<p>No available times currently</p>';
+            timesList.innerHTML = '<p>لا توجد مواعيد متاحة حالياً</p>';
             return;
         }
         
@@ -85,71 +501,1084 @@
         });
     }
 
-    // Function to add new times
+    // دالة لإضافة مواعيد جديدة
     function addAdminTimes() {
         const date = document.getElementById('new-admin-date').value;
         const timesInput = document.getElementById('new-admin-times').value;
         
         if (!date || !timesInput) {
-            alert("Please enter both date and times");
+            alert("الرجاء إدخال التاريخ والمواعيد");
             return;
         }
         
         const newTimes = timesInput.split(',').map(t => t.trim()).filter(t => t);
         
-        // Here you would send the data to your database or save it locally
-        alert(`Added ${newTimes.length} new appointments for ${date}`);
+        // هنا يمكنك إرسال البيانات إلى قاعدة البيانات أو حفظها محلياً
+        alert(`تمت إضافة ${newTimes.length} مواعيد جديدة لليوم ${date}`);
         
-        // Update the list
+        // تحديث القائمة
         loadCurrentTimes();
         
-        // Clear fields
+        // مسح الحقول
         document.getElementById('new-admin-date').value = '';
         document.getElementById('new-admin-times').value = '';
     }
 
-    // Function to remove a specific time
+    // دالة لحذف موعد محدد
     function removeAdminTime(time) {
-        if (confirm(`Are you sure you want to delete the appointment ${time}?`)) {
-            // Here's the code to delete the appointment from the database
-            alert(`Appointment ${time} deleted`);
+        if (confirm(`هل تريدين حذف الموعد ${time}؟`)) {
+            // هنا كود لحذف الموعد من قاعدة البيانات
+            alert(`تم حذف الموعد ${time}`);
             loadCurrentTimes();
         }
     }
 
-    // Function to clear all times
+    // دالة لمسح جميع المواعيد
     function clearAllTimes() {
-        if (confirm("Are you sure you want to delete all appointments? This action cannot be undone!")) {
-            // Here's the code to clear all appointments from the database
-            alert("All appointments deleted");
+        if (confirm("هل أنتِ متأكدة من حذف جميع المواعيد؟ هذا الإجراء لا يمكن التراجع عنه!")) {
+            // هنا كود لمسح جميع المواعيد من قاعدة البيانات
+            alert("تم حذف جميع المواعيد");
             loadCurrentTimes();
         }
     }
 </script>
 
+<!-- أضيفي هذا الزر في مكان غير ظاهر للعملاء (مثلًا بعد </header>) -->
 <div style="position:fixed; bottom:10px; right:10px; z-index:999;">
     <button onclick="showAdminLogin()" style="background:var(--primary); color:var(--secondary); border:2px solid var(--secondary); border-radius:50%; width:50px; height:50px; cursor:pointer;">
         <i class="fas fa-lock"></i>
     </button>
 </div>
+<body>
+    <header>
+        <img src="Curls_by_Carine_Logo_Transparent.png" alt="Curls by Carine Logo" style="width: 150px;">
+    </header>
 
-<div class="service-pricing-section" style="padding: 20px; background-color: #f9f9f9; border-radius: 8px; margin-top: 50px;">
-    <h2>Our Services & Pricing</h2>
-    
-    <h3 style="margin-top: 25px;">Dry Cut & Hair Styling</h3>
-    <ul style="list-style: none; padding: 0;">
-        <li style="margin-bottom: 15px;">
-            <h4 style="margin-bottom: 5px;">Curly / Wavy Hair</h4>
-            <ul style="list-style: disc; margin-left: 20px;">
-                <li>Short Length: 400 EGP</li>
-                <li>Medium Length: 450 EGP</li>
-                <li>Long Length: 500 EGP</li>
-            </ul>
-        </li>
-        <li style="margin-bottom: 15px;">
-            <h4 style="margin-bottom: 5px;">Coily Hair</h4>
-            <p>All Lengths: 600 EGP</p>
-        </li>
-    </ul>
-    <p style="font-style: italic; color: #555; margin-top: 20px;">*Prices may vary slightly based on hair density and specific treatment requirements. Please consult with our stylists for a personalized quote.</p>
-</div>
+    <div class="container">
+        <section id="home">
+            <h2>Welcome to Curls by Carine</h2>
+            <p>Book your perfect hair appointment with our expert stylists</p>
+            
+            <a href="#" class="btn" onclick="showSection('services')">
+                <i class="fas fa-scissors"></i> View Services
+            </a>
+            <a href="#" class="btn" onclick="showSection('booking')">
+                <i class="fas fa-calendar-check"></i> Book Appointment
+            </a>
+        </section>
+
+        <section id="services" class="hidden">
+            <h2><i class="fas fa-scissors"></i> Our Services</h2>
+            
+            <h3>Hair Cutting</h3>
+            <div class="service" onclick="selectService(this, 'Dry Cut', 150)">
+                Dry Cut <span class="price">150 EGP</span>
+            </div>
+            
+            <h3>Hair Styling</h3>
+            <div class="service" onclick="selectService(this, 'Ear Length Hair', 300)">
+                Ear Length Hair <span class="price">300 EGP</span>
+            </div>
+            <div class="service" onclick="selectService(this, 'Shoulder Length Hair', 350)">
+                Shoulder Length Hair <span class="price">350 EGP</span>
+            </div>
+            <div class="service" onclick="selectService(this, 'Mid Back Length Hair', 400)">
+                Mid Back Length Hair <span class="price">400 EGP</span>
+            </div>
+            <div class="service" onclick="selectService(this, 'Long Hair', 550)">
+                Long Hair <span class="price">550 EGP</span>
+            </div>
+            <div class="service" onclick="selectService(this, 'Afro Hair', 600)">
+    Afro Hair <span class="price">600 EGP</span>
+            </div>
+            
+            <h3>Hairstyles</h3>
+            <div class="note">
+                <i class="fas fa-info-circle"></i> Note: Hairstyle prices range from 200-700 EGP based on complexity. Final price will be determined by stylist. Inspiration photo is required.
+            </div>
+            <div class="service" onclick="selectHairstyle(this, 'Custom Hairstyle', 0)">
+                Custom Hairstyle <span class="price">200-700 EGP</span>
+            </div>
+            
+            <a href="#" class="btn" onclick="showSection('home')">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </section>
+
+        <section id="booking" class="hidden">
+            <h2><i class="fas fa-calendar-check"></i> Book Your Appointment</h2>
+            <div class="note">
+                <i class="fas fa-info-circle"></i> For Hairstyles: Upload inspiration photo (required)<br>
+                <i class="fas fa-info-circle"></i> For Dry Cut: Upload inspiration photo (optional but recommended)
+            </div>
+            
+            <div id="booking-steps">
+                <div id="step1">
+                    <h3>Select Services</h3>
+                    <div id="service-list">
+                        </div>
+                    <div id="dry-cut-upload" class="inspiration-upload hidden">
+                        <label>Upload inspiration photo for your Dry Cut (optional):</label>
+                        <input type="file" id="dry-cut-photo" accept="image/*">
+                    </div>
+                    <div id="hairstyle-upload" class="inspiration-upload hidden">
+                        <label>Upload inspiration photo for your Hairstyle (required):</label>
+                        <input type="file" id="hairstyle-photo" accept="image/*" required>
+                    </div>
+                    <button class="btn" onclick="nextStep(2)">
+                        <i class="fas fa-arrow-right"></i> Next
+                    </button>
+                </div>
+                
+                <div id="step2" class="hidden">
+                    <form action="https://formsubmit.co/curls.by.carine1@gmail.com" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="_subject" value="📅 New Booking - Curls by Carine">
+                        <input type="hidden" name="_autoresponse" value="Thank you for your booking! We'll contact you soon to confirm your appointment. 💇‍♀️">
+                        <input type="hidden" name="_template" value="table">
+                        <input type="hidden" name="services" id="form-services">
+                        <input type="hidden" name="total" id="form-total">
+                        
+                        <h3>Select Date & Time</h3>
+                        <label>Date:</label>
+                        <input type="date" id="appointment-date" name="date" required min="">
+                        
+                        <label>Time:</label>
+                        <div class="time-slots" id="time-slots">
+                            </div>
+                        <input type="hidden" id="form-time" name="time">
+                        
+                        <h3>Your Information</h3>
+                        <label>Full Name:</label>
+                        <input type="text" id="name" name="name" required>
+                        
+                        <label>Phone Number:</label>
+                        <input type="tel" id="phone" name="phone" required>
+                        
+                        <label>Email :</label>
+                        <input type="email" id="email" name="email" required>
+                        
+                        <label>do you have afro-hair?</label>
+                        <select id="afro-hair" name="afro-hair" required>
+                            <option value="no">no</option>
+                            <option value="yes">yes</option>
+                        </select>
+                        
+                        <label>Payment Method:</label>
+                        <select id="payment-method" name="payment-method" required>
+                            <option value="">Select Payment Method</option>
+                            <option value="instapay">Instapay (01129305778)</option>
+                            <option value="wallet">Mobile Wallet (01507116630)</option>
+                        </select>
+                        
+                        <div class="total-price" id="total-display">
+                            Total: 0 EGP | Required Deposit: 0 EGP
+                        </div>
+                        
+                        <label>Payment Screenshot:</label>
+                        <input type="file" id="payment-proof" name="payment-proof" required>
+                        
+                        <h3>Inspiration Photos</h3>
+                        <div class="note">
+                            <i class="fas fa-check-circle"></i> Hairstyle photo: Required for better results<br>
+                            <i class="fas fa-check-circle"></i> Dry cut photo: Helps us understand your desired style
+                        </div>
+                        <div class="inspiration-gallery" id="inspiration-gallery">
+                            </div>
+                        
+                        <button type="button" class="btn" onclick="prevStep(1)">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button type="submit" class="btn" onclick="return confirmBooking();">
+                            <i class="fas fa-check"></i> Confirm Booking
+                        </button>
+                    </form>
+                </div>
+                
+                <div id="confirmation" class="hidden confirmation-message">
+                    <i class="fas fa-check-circle" style="font-size: 50px; color: var(--secondary);"></i>
+                    <h3>Booking Confirmed!</h3>
+                    <p>We've received your appointment request. We'll contact you shortly to confirm.</p>
+                    <p>Thank you for choosing Curls by Carine!</p>
+                </div>
+            </div>
+            
+            <a href="#" class="btn" onclick="showSection('home')">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+        </section>
+    </div>
+
+    <div class="admin-lock" onclick="toggleAdminModal()">
+        <i class="fas fa-lock"></i>
+    </div>
+
+    <div class="admin-modal" id="admin-modal">
+        <div class="admin-container">
+            <h2 style="text-align: center; color: var(--primary); margin-bottom: 20px;">Admin Panel</h2>
+            
+            <div id="admin-login">
+                <form id="login-form">
+                    <label for="admin-password">Admin Password:</label>
+                    <input type="password" id="admin-password" required>
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 15px;">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+            </div>
+            
+            <div id="admin-content" class="hidden">
+                <div class="admin-tabs">
+                    <button class="admin-tab-btn active" onclick="showAdminTab('manage-slots')">
+                        <i class="fas fa-calendar-plus"></i> Time Slots
+                    </button>
+                    <button class="admin-tab-btn" onclick="showAdminTab('view-appointments')">
+                        <i class="fas fa-list"></i> Appointments
+                    </button>
+                    <button class="admin-tab-btn btn-danger" onclick="adminLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                
+                <div id="manage-slots" class="admin-tab active">
+                    <h3><i class="fas fa-calendar-plus"></i> Manage Time Slots</h3>
+                    
+                    <div class="manual-entry">
+                        <input type="date" id="manual-date" placeholder="YYYY-MM-DD">
+                        <input type="time" id="manual-time" placeholder="HH:MM">
+                        <button class="btn btn-success btn-sm" onclick="addManualSlot()">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                    
+                    <form id="add-slot-form" style="margin-top: 20px;">
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label>Date:</label>
+                                <input type="date" id="slot-date" required min="">
+                            </div>
+                            <div style="flex: 1;">
+                                <label>Time Slot:</label>
+                                <select id="slot-time" required>
+                                    <option value="">Select Time</option>
+                                    <option value="10:00 AM">10:00 AM</option>
+                                    <option value="12:00 PM">12:00 PM</option>
+                                    <option value="2:00 PM">2:00 PM</option>
+                                    <option value="4:00 PM">4:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 10px;">
+                            <i class="fas fa-plus"></i> Add Standard Slot
+                        </button>
+                    </form>
+                    
+                    <h3 style="margin-top: 30px;"><i class="fas fa-calendar-times"></i> Available Slots</h3>
+                    <div class="time-slots" id="available-slots">
+                        </div>
+                </div>
+                
+                <div id="view-appointments" class="admin-tab">
+                    <h3><i class="fas fa-list"></i> Upcoming Appointments</h3>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Completed</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Client</th>
+                                <th>Services</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointments-table">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Booking data
+        let booking = {
+            services: [],
+            time: null,
+            date: null,
+            hairstyle: null,
+            inspirationPhotos: []
+        };
+
+        // Admin data
+        let adminData = {
+            loggedIn: false,
+            availableSlots: [],
+            appointments: [],
+            adminPassword: "admin123" // Default password (change this in production)
+        };
+
+        // DOM elements
+        const adminModal = document.getElementById('admin-modal');
+        const adminLogin = document.getElementById('admin-login');
+        const adminContent = document.getElementById('admin-content');
+        const loginForm = document.getElementById('login-form');
+        const appointmentsTable = document.getElementById('appointments-table');
+        const availableSlotsContainer = document.getElementById('available-slots');
+        const addSlotForm = document.getElementById('add-slot-form');
+        const timeSlotsContainer = document.getElementById('time-slots');
+        const appointmentDateInput = document.getElementById('appointment-date');
+        const hairstylePhotoInput = document.getElementById('hairstyle-photo');
+        const dryCutPhotoInput = document.getElementById('dry-cut-photo');
+        const inspirationGallery = document.getElementById('inspiration-gallery');
+
+        // Set minimum date for booking to today
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        appointmentDateInput.min = `${year}-${month}-${day}`;
+        document.getElementById('slot-date').min = `${year}-${month}-${day}`;
+
+
+        // Show section
+        function showSection(sectionId) {
+            document.getElementById('home').classList.add('hidden');
+            document.getElementById('services').classList.add('hidden');
+            document.getElementById('booking').classList.add('hidden');
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            if (sectionId === 'booking') {
+                resetBooking();
+                loadServices();
+                loadAvailableTimeSlots();
+            }
+        }
+
+        // Select service
+        function selectService(element, name, price) {
+            // Check if selecting color without styling
+            if (name.includes('Color') || name.includes('Streaks') || name.includes('Sections') || name.includes('Ends')) {
+                const hasStyling = booking.services.some(s => 
+                    s.name.includes('Hair') || s.name.includes('Cut')
+                ) || booking.hairstyle;
+                if (!hasStyling) {
+                    alert('Please note: Coloring services require a styling service to be selected');
+                    return;
+                }
+            }
+            
+            element.classList.toggle('selected');
+            
+            const service = { name, price };
+            const index = booking.services.findIndex(s => s.name === name);
+            
+            if (index === -1) {
+                booking.services.push(service);
+            } else {
+                booking.services.splice(index, 1);
+            }
+            
+            // Show/hide dry cut upload if dry cut is selected
+            if (name === 'Dry Cut') {
+                document.getElementById('dry-cut-upload').classList.toggle('hidden', index !== -1);
+            }
+            
+            updateTotal();
+        }
+
+        // Select hairstyle
+        function selectHairstyle(element, name, price) {
+            element.classList.toggle('selected');
+            
+            if (booking.hairstyle) {
+                booking.hairstyle = null;
+                document.getElementById('hairstyle-upload').classList.add('hidden');
+            } else {
+                booking.hairstyle = { name, price: 0 }; // Price will be determined by stylist
+                document.getElementById('hairstyle-upload').classList.remove('hidden');
+            }
+            
+            updateTotal();
+        }
+
+        // Load services for booking page
+        function loadServices() {
+            const container = document.getElementById('service-list');
+            container.innerHTML = '';
+            
+            // Hair Cutting
+            container.innerHTML += '<h4>Hair Cutting</h4>';
+            container.innerHTML += `
+                <div class="service" onclick="selectService(this, 'Dry Cut', 150)">
+                    Dry Cut <span class="price">150 EGP</span>
+                </div>
+            `;
+            
+            // Hair Styling
+            container.innerHTML += '<h4>Hair Styling</h4>';
+            container.innerHTML += `
+                <div class="service" onclick="selectService(this, 'Ear Length Hair', 300)">
+                    Ear Length Hair <span class="price">300 EGP</span>
+                </div>
+                <div class="service" onclick="selectService(this, 'Shoulder Length Hair', 350)">
+                    Shoulder Length Hair <span class="price">350 EGP</span>
+                </div>
+                <div class="service" onclick="selectService(this, 'Mid Back Length Hair', 400)">
+                    Mid Back Length Hair <span class="price">400 EGP</span>
+                </div>
+                <div class="service" onclick="selectService(this, 'Long Hair', 550)">
+                    Long Hair <span class="price">550 EGP</span>
+                </div>
+            `;
+            
+            // Hairstyles
+            container.innerHTML += '<h4>Hairstyles</h4>';
+            container.innerHTML += `
+                <div class="note">
+                    <i class="fas fa-info-circle"></i> Note: Hairstyle prices range from 200-700 EGP based on complexity. Final price will be determined by stylist.
+                </div>
+                <div class="service" onclick="selectHairstyle(this, 'Custom Hairstyle', 0)">
+                    Custom Hairstyle <span class="price">200-700 EGP</span>
+                </div>
+            `;
+            
+            // Uncomment the following section if you want to re-enable Temporary Hair Colors
+            /*
+            // Temporary Hair Colors
+            container.innerHTML += '<h4>Temporary Hair Colors</h4>';
+            container.innerHTML += `
+                <div class="note">
+                    <i class="fas fa-info-circle"></i> Note: "Streaks" means colored highlights/strands. All coloring services require a styling service.
+                </div>
+            `;
+            container.innerHTML += `
+                <div class="service" onclick="selectService(this, 'Full Hair Color', 220)">
+                    Full Hair Color <span class="price">220 EGP</span>
+                </div>
+                <div class="service" onclick="selectService(this, 'Ends Only', 180)">
+                    Ends Only <span class="price">180 EGP</span>
+                </div>
+                <div class="service" onclick="selectService(this, 'Front/Back Sections', 150)">
+                    Front/Back Sections <span class="price">150 EGP</span>
+                </div>
+                <div class="service" onclick="selectService(this, 'Streaks (Highlights)', 120)">
+                    Streaks (Highlights) <span class="price">120 EGP</span>
+                </div>
+            `;
+            */
+
+            // Re-select previously chosen services if navigating back
+            booking.services.forEach(selectedService => {
+                const serviceElements = container.querySelectorAll('.service');
+                serviceElements.forEach(el => {
+                    if (el.textContent.includes(selectedService.name)) {
+                        el.classList.add('selected');
+                        if (selectedService.name === 'Dry Cut') {
+                            document.getElementById('dry-cut-upload').classList.remove('hidden');
+                        }
+                    }
+                });
+            });
+
+            if (booking.hairstyle) {
+                const hairstyleElement = container.querySelector('.service[onclick*="Custom Hairstyle"]');
+                if (hairstyleElement) {
+                    hairstyleElement.classList.add('selected');
+                    document.getElementById('hairstyle-upload').classList.remove('hidden');
+                }
+            }
+        }
+
+        // Update total price and deposit
+        function updateTotal() {
+            let total = 0;
+            booking.services.forEach(service => {
+                total += service.price;
+            });
+
+            // For hairstyle, add a placeholder value or base if it's selected
+            // This is just for display, final price is stylist determined
+            if (booking.hairstyle) {
+                total += 200; // Add a minimum for display purposes
+            }
+
+            const deposit = total * 0.5; // 50% deposit
+
+            document.getElementById('total-display').textContent = `Total: ${total} EGP | Required Deposit: ${deposit.toFixed(2)} EGP`;
+            document.getElementById('form-total').value = total.toFixed(2);
+            document.getElementById('form-services').value = JSON.stringify(booking.services.concat(booking.hairstyle ? [booking.hairstyle] : []));
+        }
+
+        // Select time slot
+        function selectTime(element, time) {
+            // Remove 'selected' from all other time slots
+            const allTimeSlots = document.querySelectorAll('.time-slot');
+            allTimeSlots.forEach(slot => {
+                slot.classList.remove('selected');
+            });
+
+            // Add 'selected' to the clicked time slot
+            element.classList.add('selected');
+            booking.time = time;
+            document.getElementById('form-time').value = time;
+        }
+
+        // --- Start of Replaced/Modified Functions from Code 1 ---
+
+        // NEW/MODIFIED: Confirm Booking function with double booking check
+        function confirmBooking() {
+            const form = document.querySelector('#booking form');
+            const formData = new FormData(form);
+            
+            // Ensure booking date and time are set
+            if (!booking.date || !booking.time) {
+                alert('Please select both a date and a time for your appointment.');
+                return false;
+            }
+
+            // Create new appointment object
+            const newAppointment = {
+                id: Date.now().toString(), // Unique ID for each booking
+                date: booking.date,
+                time: booking.time,
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                email: formData.get('email'),
+                services: booking.services,
+                hairstyle: booking.hairstyle,
+                total: parseFloat(document.getElementById('form-total').value),
+                completed: false // New field: tracks if appointment is completed
+            };
+            
+            // Get current appointments from localStorage
+            const savedAppointments = localStorage.getItem('appointments') || '[]';
+            const appointments = JSON.parse(savedAppointments);
+            
+            // Check for double booking for the same date and time
+            const isAlreadyBooked = appointments.some(app => 
+                app.date === newAppointment.date && 
+                app.time === newAppointment.time &&
+                !app.completed // Only check against uncompleted bookings
+            );
+            
+            if (isAlreadyBooked) {
+                alert('This time slot has been booked by someone else. Please select another time.');
+                return false; // Prevent form submission
+            }
+            
+            // Add the new booking
+            appointments.push(newAppointment);
+            localStorage.setItem('appointments', JSON.stringify(appointments));
+
+            // Mark the selected time slot as booked in available slots
+            const savedSlots = localStorage.getItem('availableSlots') || '[]';
+            let availableSlots = JSON.parse(savedSlots);
+            availableSlots = availableSlots.map(slot => {
+                if (slot.date === newAppointment.date && slot.time === newAppointment.time) {
+                    return { ...slot, booked: true };
+                }
+                return slot;
+            });
+            localStorage.setItem('availableSlots', JSON.stringify(availableSlots));
+            
+            // Handle inspiration photo uploads
+            uploadInspirationPhotos(newAppointment.id);
+
+            // Display confirmation message and hide booking steps
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('confirmation').classList.remove('hidden');
+            
+            // Reset booking data for next use
+            resetBooking();
+            
+            return true; // Allow form submission to FormSubmit.co
+        }
+
+        // NEW/MODIFIED: Load available time slots (now considers booked slots)
+        function loadAvailableTimeSlots() {
+            timeSlotsContainer.innerHTML = ''; // Clear existing slots
+            
+            if (!booking.date) {
+                timeSlotsContainer.innerHTML = '<p>Please select a date first</p>';
+                return;
+            }
+            
+            // Get available slots from localStorage (managed by admin)
+            const savedSlots = localStorage.getItem('availableSlots') || '[]';
+            const slots = JSON.parse(savedSlots);
+            
+            // Get booked appointments from localStorage
+            const savedAppointments = localStorage.getItem('appointments') || '[]';
+            const appointments = JSON.parse(savedAppointments);
+            
+            // Filter out times that are already booked for the selected date and are not completed
+            const bookedTimes = appointments
+                .filter(app => app.date === booking.date && !app.completed)
+                .map(app => app.time);
+            
+            // Display only available (unbooked) time slots for the selected date
+            slots
+                .filter(slot => slot.date === booking.date)
+                .sort((a, b) => { // Sort by time for better presentation
+                    const timeA = new Date(`2000/01/01 ${a.time}`);
+                    const timeB = new Date(`2000/01/01 ${b.time}`);
+                    return timeA - timeB;
+                })
+                .forEach(slot => {
+                    const isBooked = bookedTimes.includes(slot.time); // Check if this specific slot is booked
+                    const slotElement = document.createElement('div');
+                    slotElement.className = `time-slot ${isBooked ? 'booked' : ''}`;
+                    slotElement.textContent = slot.time;
+                    
+                    if (!isBooked) { // Only allow selection if not booked
+                        slotElement.onclick = function() { selectTime(this, slot.time); };
+                    }
+                    
+                    timeSlotsContainer.appendChild(slotElement);
+                });
+            
+            if (timeSlotsContainer.children.length === 0) {
+                timeSlotsContainer.innerHTML = '<p>No available times for selected date. Please check back later or select another date.</p>';
+            }
+
+            // Re-select previously chosen time if navigating back
+            if (booking.time) {
+                const selectedTimeElement = timeSlotsContainer.querySelector(`.time-slot[data-time="${booking.time}"]`);
+                if (selectedTimeElement) {
+                    selectedTimeElement.classList.add('selected');
+                }
+            }
+        }
+
+        // NEW/MODIFIED: nextStep function to check for time selection
+        function nextStep(step) {
+            if (step === 2) {
+                // Check if any service or hairstyle is selected
+                if (booking.services.length === 0 && !booking.hairstyle) {
+                    alert('Please select at least one service or a custom hairstyle.');
+                    return;
+                }
+                
+                // Check for hairstyle inspiration photo if hairstyle is selected
+                if (booking.hairstyle && !hairstylePhotoInput.files[0]) {
+                    alert('Please upload an inspiration photo for your hairstyle. It is required.');
+                    return;
+                }
+                
+                // Check if a time slot has been selected
+                if (!booking.time) {
+                    alert('Please select a time slot for your appointment.');
+                    return;
+                }
+                
+                // If all checks pass, proceed to step 2
+                document.getElementById('step1').classList.add('hidden');
+                document.getElementById('step2').classList.remove('hidden');
+
+                // Pre-fill date and time inputs for FormSubmit
+                document.getElementById('appointment-date').value = booking.date;
+                document.getElementById('form-time').value = booking.time;
+
+                // Display selected inspiration photos
+                displayInspirationPhotos();
+
+            } else if (step === 1) { // If moving back to step 1
+                document.getElementById('step2').classList.add('hidden');
+                document.getElementById('step1').classList.remove('hidden');
+            }
+            // No other steps handled here, assume step 1 and 2 are the main ones
+        }
+
+        // NEW/MODIFIED: Update appointments table in admin panel
+        function updateAppointmentsTable() {
+            appointmentsTable.innerHTML = ''; // Clear existing table rows
+            
+            // Get appointments from localStorage and sort them by date
+            const savedAppointments = localStorage.getItem('appointments') || '[]';
+            const appointments = JSON.parse(savedAppointments)
+                .sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time)); // Sort by date and then time
+            
+            if (appointments.length === 0) {
+                appointmentsTable.innerHTML = '<tr><td colspan="7">No appointments found</td></tr>';
+                return;
+            }
+            
+            appointments.forEach(app => {
+                const row = document.createElement('tr');
+                if (app.completed) row.classList.add('completed'); // Add 'completed' class if finished
+                
+                let servicesText = '';
+                if (app.services && app.services.length > 0) {
+                    servicesText = app.services.map(s => s.name).join(', ');
+                }
+                if (app.hairstyle) {
+                    servicesText += (servicesText ? ', ' : '') + app.hairstyle.name;
+                }
+                
+                row.innerHTML = `
+                    <td style="text-align: center;">
+                        <input type="checkbox" class="completed-checkbox" ${app.completed ? 'checked' : ''}
+                            onchange="toggleAppointmentCompletion('${app.id}', this.checked)">
+                    </td>
+                    <td>${formatDate(app.date)}</td>
+                    <td>${app.time}</td>
+                    <td>${app.name}</td>
+                    <td>${servicesText || 'N/A'}</td>
+                    <td>${app.total ? app.total + ' EGP' : 'N/A'}</td>
+                    <td class="action-btns">
+                        <button class="btn btn-danger btn-sm" onclick="cancelAppointment('${app.id}')">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        ${app.inspirationPhotos && app.inspirationPhotos.length > 0 ? 
+                            `<button class="btn btn-info btn-sm" onclick="viewInspiration('${app.id}')">
+                                <i class="fas fa-image"></i> Photos
+                            </button>` : ''}
+                    </td>
+                `;
+                
+                appointmentsTable.appendChild(row);
+            });
+        }
+
+        // --- End of Replaced/Modified Functions from Code 1 ---
+
+        // Helper function to format date for display
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        // Reset booking data
+        function resetBooking() {
+            booking = {
+                services: [],
+                time: null,
+                date: null,
+                hairstyle: null,
+                inspirationPhotos: []
+            };
+            document.querySelectorAll('.service.selected').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.time-slot.selected').forEach(el => el.classList.remove('selected'));
+            document.getElementById('appointment-date').value = '';
+            document.getElementById('form-time').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('afro-hair').value = 'no';
+            document.getElementById('payment-method').value = '';
+            document.getElementById('dry-cut-upload').classList.add('hidden');
+            document.getElementById('hairstyle-upload').classList.add('hidden');
+            document.getElementById('hairstyle-photo').value = '';
+            document.getElementById('dry-cut-photo').value = '';
+            document.getElementById('payment-proof').value = '';
+            inspirationGallery.innerHTML = ''; // Clear inspiration photos
+            updateTotal();
+        }
+
+        // Handle date selection
+        appointmentDateInput.addEventListener('change', (event) => {
+            booking.date = event.target.value;
+            booking.time = null; // Reset selected time when date changes
+            document.getElementById('form-time').value = ''; // Clear hidden time input
+            loadAvailableTimeSlots();
+        });
+
+        // Admin Panel Functions
+
+        // Toggle Admin Modal
+        function toggleAdminModal() {
+            adminModal.classList.toggle('active');
+            if (adminModal.classList.contains('active')) {
+                if (adminData.loggedIn) {
+                    adminLogin.classList.add('hidden');
+                    adminContent.classList.remove('hidden');
+                    loadAvailableSlots(); // Load admin slots when modal opens
+                    updateAppointmentsTable(); // Load appointments when modal opens
+                } else {
+                    adminLogin.classList.remove('hidden');
+                    adminContent.classList.add('hidden');
+                    document.getElementById('admin-password').value = ''; // Clear password input
+                }
+            }
+        }
+
+        // Admin Login
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const password = document.getElementById('admin-password').value;
+            if (password === adminData.adminPassword) {
+                adminData.loggedIn = true;
+                localStorage.setItem('adminLoggedIn', 'true');
+                adminLogin.classList.add('hidden');
+                adminContent.classList.remove('hidden');
+                loadAvailableSlots();
+                updateAppointmentsTable();
+                showAdminTab('manage-slots'); // Default to manage slots tab
+            } else {
+                alert('Incorrect password. Please try again.');
+                document.getElementById('admin-password').value = '';
+            }
+        });
+
+        // Admin Logout
+        function adminLogout() {
+            adminData.loggedIn = false;
+            localStorage.removeItem('adminLoggedIn');
+            toggleAdminModal(); // Close modal
+        }
+
+        // Show Admin Tabs
+        function showAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.admin-tab-btn[onclick*="${tabId}"]`).classList.add('active');
+
+            if (tabId === 'manage-slots') {
+                loadAvailableSlots();
+            } else if (tabId === 'view-appointments') {
+                updateAppointmentsTable();
+            }
+        }
+
+        // Load available slots for admin to manage
+        function loadAvailableSlots() {
+            availableSlotsContainer.innerHTML = '';
+            const savedSlots = localStorage.getItem('availableSlots') || '[]';
+            adminData.availableSlots = JSON.parse(savedSlots);
+
+            if (adminData.availableSlots.length === 0) {
+                availableSlotsContainer.innerHTML = '<p>No time slots added yet. Use the form above to add some.</p>';
+                return;
+            }
+
+            adminData.availableSlots
+                .sort((a, b) => {
+                    const dateTimeA = new Date(`${a.date} ${a.time}`);
+                    const dateTimeB = new Date(`${b.date} ${b.time}`);
+                    return dateTimeA - dateTimeB;
+                })
+                .forEach(slot => {
+                    const slotElement = document.createElement('div');
+                    slotElement.className = `time-slot ${slot.booked ? 'booked' : ''}`; // Add 'booked' class if slot is booked
+                    slotElement.setAttribute('data-date', slot.date);
+                    slotElement.setAttribute('data-time', slot.time);
+                    slotElement.innerHTML = `
+                        ${formatDate(slot.date)} - ${slot.time} 
+                        ${slot.booked ? ' (Booked)' : ''}
+                        <button class="btn btn-danger btn-sm" onclick="removeSlot('${slot.date}', '${slot.time}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    availableSlotsContainer.appendChild(slotElement);
+                });
+        }
+
+        // Add standard time slot from form
+        addSlotForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const date = document.getElementById('slot-date').value;
+            const time = document.getElementById('slot-time').value;
+
+            if (!date || !time) {
+                alert('Please select both date and time.');
+                return;
+            }
+
+            addSlot(date, time);
+        });
+
+        // Add manual time slot
+        function addManualSlot() {
+            const date = document.getElementById('manual-date').value;
+            const time = document.getElementById('manual-time').value;
+
+            if (!date || !time) {
+                alert('Please enter both date and time for manual slot.');
+                return;
+            }
+            addSlot(date, time);
+        }
+
+        // Common function to add a slot
+        function addSlot(date, time) {
+            const isDuplicate = adminData.availableSlots.some(slot => slot.date === date && slot.time === time);
+            if (isDuplicate) {
+                alert('This time slot for this date already exists!');
+                return;
+            }
+
+            adminData.availableSlots.push({ date, time, booked: false }); // Add 'booked' status, default to false
+            localStorage.setItem('availableSlots', JSON.stringify(adminData.availableSlots));
+            loadAvailableSlots(); // Refresh the display
+            alert('Time slot added!');
+        }
+
+        // Remove time slot
+        function removeSlot(date, time) {
+            if (confirm('Are you sure you want to remove this time slot? This will NOT cancel any existing bookings.')) {
+                adminData.availableSlots = adminData.availableSlots.filter(slot => !(slot.date === date && slot.time === time));
+                localStorage.setItem('availableSlots', JSON.stringify(adminData.availableSlots));
+                loadAvailableSlots();
+                // Also update client-side available time slots if admin panel is open
+                loadAvailableTimeSlots(); 
+            }
+        }
+
+        // Toggle appointment completion status
+        function toggleAppointmentCompletion(id, isCompleted) {
+            const savedAppointments = localStorage.getItem('appointments') || '[]';
+            let appointments = JSON.parse(savedAppointments);
+            
+            appointments = appointments.map(app => {
+                if (app.id === id) {
+                    return { ...app, completed: isCompleted };
+                }
+                return app;
+            });
+            localStorage.setItem('appointments', JSON.stringify(appointments));
+            updateAppointmentsTable(); // Refresh table
+            loadAvailableTimeSlots(); // Refresh client-side slots as well
+        }
+
+        // Cancel appointment
+        function cancelAppointment(id) {
+            if (confirm('Are you sure you want to cancel this appointment? This action cannot be undone.')) {
+                const savedAppointments = localStorage.getItem('appointments') || '[]';
+                let appointments = JSON.parse(savedAppointments);
+                
+                // Find the appointment to get its date and time
+                const canceledApp = appointments.find(app => app.id === id);
+
+                appointments = appointments.filter(app => app.id !== id);
+                localStorage.setItem('appointments', JSON.stringify(appointments));
+                updateAppointmentsTable(); // Refresh table
+
+                // If a canceled appointment existed, mark its time slot as unbooked
+                if (canceledApp) {
+                    const savedSlots = localStorage.getItem('availableSlots') || '[]';
+                    let availableSlots = JSON.parse(savedSlots);
+                    availableSlots = availableSlots.map(slot => {
+                        if (slot.date === canceledApp.date && slot.time === canceledApp.time) {
+                            return { ...slot, booked: false };
+                        }
+                        return slot;
+                    });
+                    localStorage.setItem('availableSlots', JSON.stringify(availableSlots));
+                    loadAvailableTimeSlots(); // Refresh client-side slots
+                }
+            }
+        }
+        
+        // Handle inspiration photo uploads
+        hairstylePhotoInput.addEventListener('change', handlePhotoUpload);
+        dryCutPhotoInput.addEventListener('change', handlePhotoUpload);
+
+        function handlePhotoUpload(event) {
+            const files = event.target.files;
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        booking.inspirationPhotos.push({
+                            id: Date.now().toString() + i, // Unique ID for each photo
+                            src: e.target.result,
+                            fileName: file.name,
+                            type: event.target.id === 'hairstyle-photo' ? 'hairstyle' : 'drycut'
+                        });
+                        displayInspirationPhotos();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        // Display inspiration photos in the gallery
+        function displayInspirationPhotos() {
+            inspirationGallery.innerHTML = ''; // Clear existing photos
+            if (booking.inspirationPhotos.length === 0) {
+                inspirationGallery.innerHTML = '<p>No inspiration photos selected yet.</p>';
+                return;
+            }
+
+            booking.inspirationPhotos.forEach(photo => {
+                const item = document.createElement('div');
+                item.className = 'inspiration-item';
+                item.innerHTML = `
+                    <img src="${photo.src}" alt="Inspiration Photo">
+                    <button class="delete-btn" onclick="removeInspirationPhoto('${photo.id}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                inspirationGallery.appendChild(item);
+            });
+        }
+
+        // Remove inspiration photo
+        function removeInspirationPhoto(id) {
+            booking.inspirationPhotos = booking.inspirationPhotos.filter(photo => photo.id !== id);
+            displayInspirationPhotos();
+        }
+
+        // Upload inspiration photos to FormSubmit (as hidden fields)
+        function uploadInspirationPhotos(appointmentId) {
+            const form = document.querySelector('#booking form');
+            booking.inspirationPhotos.forEach((photo, index) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `inspiration_photo_${appointmentId}_${index}`;
+                input.value = photo.src; // Base64 encoded image
+                form.appendChild(input);
+            });
+        }
+
+        // View inspiration photos from admin panel (placeholder)
+        function viewInspiration(appointmentId) {
+            const savedAppointments = localStorage.getItem('appointments') || '[]';
+            const appointments = JSON.parse(savedAppointments);
+            const app = appointments.find(a => a.id === appointmentId);
+
+            if (app && app.inspirationPhotos && app.inspirationPhotos.length > 0) {
+                let photosHtml = '<h3>Inspiration Photos:</h3><div class="inspiration-gallery">';
+                app.inspirationPhotos.forEach(photo => {
+                    photosHtml += `<div class="inspiration-item"><img src="${photo.src}" alt="Inspiration"></div>`;
+                });
+                photosHtml += '</div>';
+                
+                const win = window.open('', '_blank');
+                win.document.write(`
+                    <html>
+                    <head>
+                        <title>Inspiration Photos for ${app.name}</title>
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+                        <style>${document.querySelector('style').textContent}</style>
+                    </head>
+                    <body>
+                        <div class="container">${photosHtml}</div>
+                    </body>
+                    </html>
+                `);
+                win.document.close();
+            } else {
+                alert('No inspiration photos found for this appointment.');
+            }
+        }
+
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if admin was logged in previously
+            if (localStorage.getItem('adminLoggedIn') === 'true') {
+                adminData.loggedIn = true;
+            }
+            showSection('home'); // Show home page by default
+            updateTotal(); // Initialize total display
+            loadAvailableSlots(); // Load admin slots on page load
+            updateAppointmentsTable(); // Load appointments on page load
+        });
+    </script>
+</body>
+    </html>
