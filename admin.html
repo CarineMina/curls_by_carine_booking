@@ -1,73 +1,71 @@
-<!-- أضيفي هذا الكود قبل </body> -->
 <script>
-    // نظام تسجيل دخول الإدمين (كلمة مرور بسيطة)
-    const ADMIN_PASSWORD = "CurlsByCarine123"; // غيّريها لكلمة سر قوية
+    // Admin Login System (Simple Password)
+    const ADMIN_PASSWORD = "CurlsByCarine123"; // Change this to a strong password
     let isAdminLoggedIn = false;
 
     function showAdminLogin() {
-        const password = prompt("أدخل كلمة مرور الإدمين:");
+        const password = prompt("Enter admin password:");
         if (password === ADMIN_PASSWORD) {
             isAdminLoggedIn = true;
             showAdminPanel();
         } else {
-            alert("كلمة المرور غير صحيحة");
+            alert("Incorrect password");
         }
     }
 
     function showAdminPanel() {
         if (!isAdminLoggedIn) return;
         
-        // إنشاء واجهة الإدمين
+        // Create Admin Interface
         const adminHTML = `
             <div id="admin-panel" style="position:fixed; top:20px; right:20px; z-index:1000; background:white; padding:20px; border:2px solid var(--secondary); border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.2); max-width:400px;">
-                <h2 style="color:var(--secondary); margin-top:0;">لوحة التحكم</h2>
+                <h2 style="color:var(--secondary); margin-top:0;">Admin Panel</h2>
                 
-                <h3>إدارة المواعيد</h3>
+                <h3>Manage Appointments</h3>
                 <div style="margin-bottom:15px;">
-                    <label>تاريخ جديد:</label>
+                    <label>New Date:</label>
                     <input type="date" id="new-admin-date" style="width:100%; padding:8px; margin:5px 0;">
                 </div>
                 
                 <div style="margin-bottom:15px;">
-                    <label>مواعيد جديدة (افصل بينها بفاصلة):</label>
+                    <label>New Times (comma-separated):</label>
                     <input type="text" id="new-admin-times" placeholder="2:00 PM, 4:00 PM" style="width:100%; padding:8px; margin:5px 0;">
                 </div>
                 
                 <button onclick="addAdminTimes()" class="btn" style="margin-right:5px;">
-                    <i class="fas fa-plus"></i> إضافة مواعيد
+                    <i class="fas fa-plus"></i> Add Times
                 </button>
                 <button onclick="document.getElementById('admin-panel').remove()" class="btn">
-                    <i class="fas fa-times"></i> إغلاق
+                    <i class="fas fa-times"></i> Close
                 </button>
                 
                 <hr style="margin:15px 0; border-color:var(--secondary);">
                 
-                <h3>المواعيد المتاحة حالياً</h3>
+                <h3>Current Available Times</h3>
                 <div id="current-times-list" style="max-height:200px; overflow-y:auto; margin-bottom:15px;">
-                    <!-- المواعيد الحالية تظهر هنا -->
-                </div>
+                    </div>
                 
                 <button onclick="clearAllTimes()" class="btn" style="background:#ff4444; border-color:#ff4444;">
-                    <i class="fas fa-trash"></i> مسح جميع المواعيد
+                    <i class="fas fa-trash"></i> Clear All Times
                 </button>
             </div>
         `;
         
-        // إضافة الواجهة إلى الصفحة
+        // Add the interface to the page
         document.body.insertAdjacentHTML('beforeend', adminHTML);
         loadCurrentTimes();
     }
 
-    // دالة لتحميل المواعيد الحالية
+    // Function to load current times
     function loadCurrentTimes() {
         const timesList = document.getElementById('current-times-list');
         timesList.innerHTML = '';
         
-        // يمكنك استبدال هذا بجلب البيانات من قاعدة بيانات إذا كنتِ تستخدمينها
+        // You can replace this with fetching data from a database if you're using one
         const currentTimes = ['10:00 AM', '12:00 PM', '2:00 PM', '4:00 PM'];
         
         if (currentTimes.length === 0) {
-            timesList.innerHTML = '<p>لا توجد مواعيد متاحة حالياً</p>';
+            timesList.innerHTML = '<p>No available times currently</p>';
             return;
         }
         
@@ -87,51 +85,66 @@
         });
     }
 
-    // دالة لإضافة مواعيد جديدة
+    // Function to add new times
     function addAdminTimes() {
         const date = document.getElementById('new-admin-date').value;
         const timesInput = document.getElementById('new-admin-times').value;
         
         if (!date || !timesInput) {
-            alert("الرجاء إدخال التاريخ والمواعيد");
+            alert("Please enter both date and times");
             return;
         }
         
         const newTimes = timesInput.split(',').map(t => t.trim()).filter(t => t);
         
-        // هنا يمكنك إرسال البيانات إلى قاعدة البيانات أو حفظها محلياً
-        alert(`تمت إضافة ${newTimes.length} مواعيد جديدة لليوم ${date}`);
+        // Here you would send the data to your database or save it locally
+        alert(`Added ${newTimes.length} new appointments for ${date}`);
         
-        // تحديث القائمة
+        // Update the list
         loadCurrentTimes();
         
-        // مسح الحقول
+        // Clear fields
         document.getElementById('new-admin-date').value = '';
         document.getElementById('new-admin-times').value = '';
     }
 
-    // دالة لحذف موعد محدد
+    // Function to remove a specific time
     function removeAdminTime(time) {
-        if (confirm(`هل تريدين حذف الموعد ${time}؟`)) {
-            // هنا كود لحذف الموعد من قاعدة البيانات
-            alert(`تم حذف الموعد ${time}`);
+        if (confirm(`Are you sure you want to delete the appointment ${time}?`)) {
+            // Here's the code to delete the appointment from the database
+            alert(`Appointment ${time} deleted`);
             loadCurrentTimes();
         }
     }
 
-    // دالة لمسح جميع المواعيد
+    // Function to clear all times
     function clearAllTimes() {
-        if (confirm("هل أنتِ متأكدة من حذف جميع المواعيد؟ هذا الإجراء لا يمكن التراجع عنه!")) {
-            // هنا كود لمسح جميع المواعيد من قاعدة البيانات
-            alert("تم حذف جميع المواعيد");
+        if (confirm("Are you sure you want to delete all appointments? This action cannot be undone!")) {
+            // Here's the code to clear all appointments from the database
+            alert("All appointments deleted");
             loadCurrentTimes();
         }
     }
 </script>
 
-<!-- أضيفي هذا الزر في مكان غير ظاهر للعملاء (مثلًا بعد </header>) -->
 <div style="position:fixed; bottom:10px; right:10px; z-index:999;">
     <button onclick="showAdminLogin()" style="background:var(--primary); color:var(--secondary); border:2px solid var(--secondary); border-radius:50%; width:50px; height:50px; cursor:pointer;">
         <i class="fas fa-lock"></i>
     </button>
+</div>
+
+<div class="service-pricing-section" style="padding: 20px; background-color: #f9f9f9; border-radius: 8px; margin-top: 50px;">
+    <h2>Our Services & Pricing</h2>
+    <ul>
+        <li style="margin-bottom: 10px;">
+            <p><strong>Curly Hair Services:</strong> 450 EGP</p>
+        </li>
+        <li style="margin-bottom: 10px;">
+            <p><strong>Wavy Hair Services:</strong> 400 EGP</p>
+        </li>
+        <li style="margin-bottom: 10px;">
+            <p><strong>Coily Hair Services:</strong> 600 EGP</p>
+        </li>
+    </ul>
+    <p style="font-style: italic; color: #555;">*Prices may vary based on hair length and specific treatment. Please consult with our stylists for a personalized quote.</p>
 </div>
