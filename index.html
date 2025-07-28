@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -707,7 +708,6 @@
             { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Ear Length Hair', price: 300, type: 'style' },
             { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Shoulder Length Hair', price: 350, type: 'style' },
             { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Mid Back Length Hair', price: 400, type: 'style' },
-            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Long Hair', price: 550, type: 'style' },
             { category: 'Hair Styling', subCategory: 'coily hair', name: 'coily/afro/kinky', price: 600, type: 'style' },
             { category: 'Hairstyles', name: 'Custom Hairstyle', price: '200-700', type: 'custom_style' } // Price range for custom
         ];
@@ -1159,7 +1159,7 @@
             timeSlotsContainer.innerHTML = '';
 
             const slotsForDate = adminData.availableSlots
-                .filter(slot => slot.date === selectedDate)
+                .filter(slot => slot.date === selectedDate && !slot.booked) // Only show available (not booked) slots
                 .sort((a, b) => {
                     // Simple string comparison for time will work if times are always HH:MM AM/PM
                     const timeA = new Date(`01/01/2000 ${a.time}`);
@@ -1175,13 +1175,9 @@
             slotsForDate.forEach(slot => {
                 const div = document.createElement('div');
                 div.classList.add('time-slot');
-                if (slot.booked) {
-                    div.classList.add('booked');
-                    div.title = "This slot is already booked.";
-                } else {
-                    div.classList.add('available');
-                    div.onclick = () => selectTimeSlot(div, slot.date, slot.time);
-                }
+                // No need to check for slot.booked here as we filtered them out
+                div.classList.add('available');
+                div.onclick = () => selectTimeSlot(div, slot.date, slot.time);
 
                 div.textContent = slot.time;
                 timeSlotsContainer.appendChild(div);
