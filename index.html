@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -791,8 +790,10 @@
 
         // --- Local Storage Management ---
         function saveAdminData() {
+            // ** هذا السطر يقوم بحفظ البيانات. تأكد أن المتصفح يسمح بالحفظ **
             localStorage.setItem('adminData', JSON.stringify(adminData));
             loadAvailableTimeSlotsForClient();
+            console.log("Data saved to localStorage:", adminData);
         }
 
         function loadAdminData() {
@@ -945,83 +946,4 @@
             if (hasOnlyHairstyle) {
                 document.getElementById('total-display').innerHTML = `Total: ${booking.services[0].price} EGP (Price to be determined based on style) | Required Deposit: 0 EGP`;
             } else {
-                document.getElementById('total-display').innerHTML = `Total: ${totalFixedPrice} EGP | Required Deposit: ${deposit.toFixed(2)} EGP`;
-            }
-        }
-
-
-        // --- Time Slot Selection ---
-        function loadAvailableTimeSlotsForClient() {
-            const selectedDate = appointmentDateInput.value;
-            const slotsForDate = adminData.availableSlots.filter(s => s.date === selectedDate);
-            
-            timeSlotsContainer.innerHTML = '';
-            
-            if (slotsForDate.length > 0) {
-                slotsForDate.forEach(slot => {
-                    const div = document.createElement('div');
-                    div.className = 'time-slot';
-                    if (slot.booked) {
-                        div.classList.add('booked');
-                    }
-                    div.dataset.time = slot.time;
-                    div.textContent = slot.time;
-                    div.onclick = () => {
-                        if (!slot.booked) {
-                            selectTimeSlot(div);
-                        }
-                    };
-                    timeSlotsContainer.appendChild(div);
-                });
-            } else {
-                timeSlotsContainer.innerHTML = '<div class="note">No time slots available for this date. Please choose another date.</div>';
-            }
-        }
-
-        function selectTimeSlot(el) {
-            document.querySelectorAll('.time-slot.selected').forEach(slot => {
-                slot.classList.remove('selected');
-            });
-            el.classList.add('selected');
-            booking.time = el.dataset.time;
-            booking.date = appointmentDateInput.value;
-        }
-
-        appointmentDateInput.addEventListener('change', loadAvailableTimeSlotsForClient);
-
-        // --- New Confirmation & Booking Logic ---
-        function showConfirmationPage() {
-            const selectedServices = booking.services.map(s => s.name).join(', ');
-            const selectedTimeSlot = document.querySelector('.time-slot.selected');
-
-            if (booking.services.length === 0) {
-                alert("Please select a service.");
-                return;
-            }
-            if (!selectedTimeSlot) {
-                alert("Please select a time slot.");
-                return;
-            }
-
-            // Check if dry cut and/or hairstyle photos are required and uploaded
-            const hasDryCut = booking.services.some(s => s.type === 'cut');
-            const hasHairstyle = booking.services.some(s => s.type === 'hairstyle');
-
-            if (hasDryCut && !document.getElementById('dry-cut-photo').files.length) {
-                alert("An inspiration photo is required for Dry Cut services.");
-                return;
-            }
-
-            if (hasHairstyle && !document.getElementById('hairstyle-photo').files.length) {
-                alert("An inspiration photo is required for Hairstyle services.");
-                return;
-            }
-
-            // Check for other required fields
-            if (!document.getElementById('name').value || !document.getElementById('phone').value || !document.getElementById('payment-method').value || !document.getElementById('payment-proof').files.length) {
-                alert("Please fill in all required personal and payment information.");
-                return;
-            }
-
-            // Collect all data
-            const name = document.
+                document.getElementById('total-display').innerHTML = `Total: ${totalFixedPrice} EGP
