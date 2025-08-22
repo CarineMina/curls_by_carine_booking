@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -791,8 +790,10 @@
 
         // --- Local Storage Management ---
         function saveAdminData() {
+            // ** هذا السطر يقوم بحفظ البيانات. تأكد أن المتصفح يسمح بالحفظ **
             localStorage.setItem('adminData', JSON.stringify(adminData));
             loadAvailableTimeSlotsForClient();
+            console.log("Data saved to localStorage:", adminData);
         }
 
         function loadAdminData() {
@@ -1094,10 +1095,10 @@
             // Save the new appointment to the admin data
             adminData.appointments.push(newAppointment);
 
-            // Save everything to localStorage
+            // ** هنا يتم حفظ البيانات. نستخدم console.log للتأكد من عملية الحفظ **
             saveAdminData();
-
-            // ** هذا هو السطر الذي يقوم بتحديث لوحة تحكم المدير فوراً **
+            
+            // ** بعد الحفظ مباشرةً، يتم تحديث لوحة التحكم. **
             renderAppointments();
             
             // Reset booking state for next user
@@ -1137,6 +1138,7 @@
                 adminLogin.classList.add('hidden');
                 adminContent.classList.remove('hidden');
                 renderAdminTimeSlots();
+                // عند فتح لوحة التحكم، يتم عرض الحجوزات
                 renderAppointments();
             } else {
                 adminLogin.classList.remove('hidden');
@@ -1355,4 +1357,4 @@
         appointmentSearchInput.addEventListener('input', renderAppointments);
     </script>
 </body>
-    </html>
+</html>
