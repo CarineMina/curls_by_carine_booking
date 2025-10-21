@@ -600,7 +600,7 @@
                     </div>
 
                     <div id="just-refresh-upload" class="inspiration-upload hidden">
-                        <label>Upload inspiration photo for Just Refresh Cut:</label>
+                        <label>Upload inspiration photo for Wet/Dry Cut + Refresh:</label>
                         <input type="file" id="just-refresh-photo" name="just_refresh_photo" accept="image/*" required>
                     </div>
                     
@@ -757,7 +757,7 @@
             // Curly Cuts 
             { category: 'Curly Cuts', name: 'Dry Cut', price: 200, type: 'cut' }, 
             { category: 'Curly Cuts', name: 'Wet Cut', price: 200, type: 'cut' }, 
-            { category: 'Curly Cuts', name: 'Refresh Cut (Wet/Dry)', price: 300, type: 'cut' }, 
+            { category: 'Curly Cuts', name: 'Wet/Dry Cut + Refresh', price: 300, type: 'cut' }, // CHANGED Name
 
             // Hair Styling (Prices increased by 50 EGP from initial request)
             { category: 'Hair Styling', subCategory: 'Curly & Wavy Hair', name: 'Ear Length Hair', price: 350, type: 'styling' },
@@ -931,9 +931,9 @@
                 alert('Please upload an inspiration photo for your Wet Cut.');
                 return;
             }
-            const justRefreshSelected = booking.services.some(s => s.name === 'Refresh Cut (Wet/Dry)');
+            const justRefreshSelected = booking.services.some(s => s.name === 'Wet/Dry Cut + Refresh'); // UPDATED
             if (justRefreshSelected && !document.getElementById('just-refresh-photo').files[0]) {
-                alert('Please upload an inspiration photo for your Refresh Cut.');
+                alert('Please upload an inspiration photo for your Wet/Dry Cut + Refresh.'); // UPDATED
                 return;
             }
 
@@ -1088,7 +1088,7 @@
                     if (Array.isArray(groupedServices[category][subOrServiceName])) {
                         if (category === 'Hair Styling' && subOrServiceName !== 'Curly & Wavy Hair' && subOrServiceName !== 'Coily Hair') {
                             // Skip SubCategory title if it's the main category for cuts/hairstyles
-                        } else if (subOrServiceName !== 'Dry Cut' && subOrServiceName !== 'Wet Cut' && subOrServiceName !== 'Refresh Cut (Wet/Dry)' && subOrServiceName !== 'Custom Hairstyle') {
+                        } else if (subOrServiceName !== 'Dry Cut' && subOrServiceName !== 'Wet Cut' && subOrServiceName !== 'Wet/Dry Cut + Refresh' && subOrServiceName !== 'Custom Hairstyle') { // UPDATED
                             html += `<h4>- ${subOrServiceName}</h4>`;
                         }
                         groupedServices[category][subOrServiceName].forEach(service => {
@@ -1130,7 +1130,7 @@
                     if (Array.isArray(groupedServices[category][subOrServiceName])) {
                         if (category === 'Hair Styling' && subOrServiceName !== 'Curly & Wavy Hair' && subOrServiceName !== 'Coily Hair') {
                             // Skip SubCategory title if it's the main category for cuts/hairstyles
-                        } else if (subOrServiceName !== 'Dry Cut' && subOrServiceName !== 'Wet Cut' && subOrServiceName !== 'Refresh Cut (Wet/Dry)' && subOrServiceName !== 'Custom Hairstyle') {
+                        } else if (subOrServiceName !== 'Dry Cut' && subOrServiceName !== 'Wet Cut' && subOrServiceName !== 'Wet/Dry Cut + Refresh' && subOrServiceName !== 'Custom Hairstyle') { // UPDATED
                             html += `<h4>- ${subOrServiceName}</h4>`;
                         }
                         groupedServices[category][subOrServiceName].forEach(service => {
@@ -1174,7 +1174,7 @@
             
             const dryCutSelected = booking.services.some(s => s.name === 'Dry Cut');
             const wetCutSelected = booking.services.some(s => s.name === 'Wet Cut');
-            const justRefreshSelected = booking.services.some(s => s.name === 'Refresh Cut (Wet/Dry)');
+            const justRefreshSelected = booking.services.some(s => s.name === 'Wet/Dry Cut + Refresh'); // UPDATED
             const hairstyleSelected = booking.services.some(s => s.type === 'hairstyle');
             
             // Only show the specific cut upload if that service is selected
@@ -1479,7 +1479,7 @@
 
             if (app.justRefreshPhoto) {
                 detailsHTML += `
-                    <h4>Refresh Cut Inspiration:</h4>
+                    <h4>Wet/Dry Cut + Refresh Inspiration:</h4>
                     <a href="${app.justRefreshPhoto}" target="_blank"><img src="${app.justRefreshPhoto}" style="max-width: 100%; border: 1px solid var(--gray); border-radius: 5px;"></a>
                 `;
             }
@@ -1503,4 +1503,3 @@
 
 </body>
     </html>
-
