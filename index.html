@@ -754,10 +754,10 @@
     <script>
         // Data for services, acting as a single source of truth for prices and categories
         const servicesData = [
-            // Curly Cuts (Dry Cut and Wet Cut are now 300 EGP)
-            { category: 'Curly Cuts', name: 'Dry Cut', price: 300, type: 'cut' }, // CHANGED
-            { category: 'Curly Cuts', name: 'Wet Cut', price: 300, type: 'cut' }, // CHANGED
-            { category: 'Curly Cuts', name: 'Wet أو Dry Cut بـ Just Refresh', price: 300, type: 'cut' }, // Unchanged from last request
+            // Curly Cuts (Dry Cut and Wet Cut are now 200 EGP)
+            { category: 'Curly Cuts', name: 'Dry Cut', price: 200, type: 'cut' }, // CHANGED to 200
+            { category: 'Curly Cuts', name: 'Wet Cut', price: 200, type: 'cut' }, // CHANGED to 200
+            { category: 'Curly Cuts', name: 'Wet أو Dry Cut بـ Just Refresh', price: 300, type: 'cut' }, // Unchanged
 
             // Hair Styling (Prices increased by 50 EGP from initial request)
             { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Ear Length Hair', price: 350, type: 'styling' },
@@ -800,8 +800,8 @@
         const appointmentDateInput = document.getElementById('appointment-date');
         const hairstylePhotoInput = document.getElementById('hairstyle-photo');
         const dryCutPhotoInput = document.getElementById('dry-cut-photo');
-        const wetCutPhotoInput = document.getElementById('wet-cut-photo'); // New
-        const justRefreshPhotoInput = document.getElementById('just-refresh-photo'); // New
+        const wetCutPhotoInput = document.getElementById('wet-cut-photo'); 
+        const justRefreshPhotoInput = document.getElementById('just-refresh-photo'); 
         const servicesListDisplay = document.getElementById('services-list-display'); // For services page
         const serviceSelectionList = document.getElementById('service-selection-list'); // For booking step 1
         const appointmentSearchInput = document.getElementById('appointment-search');
@@ -982,8 +982,8 @@
             const reader = new FileReader();
             let paymentProofBase64 = '';
             let dryCutPhotoBase64 = '';
-            let wetCutPhotoBase64 = ''; // New
-            let justRefreshPhotoBase64 = ''; // New
+            let wetCutPhotoBase64 = ''; 
+            let justRefreshPhotoBase64 = ''; 
             let hairstylePhotoBase64 = '';
 
             const processPhotos = () => {
@@ -1006,8 +1006,8 @@
                     paymentMethod: paymentMethod,
                     paymentProof: paymentProofBase64,
                     dryCutPhoto: dryCutPhotoBase64,
-                    wetCutPhoto: wetCutPhotoBase64, // New
-                    justRefreshPhoto: justRefreshPhotoBase64, // New
+                    wetCutPhoto: wetCutPhotoBase64, 
+                    justRefreshPhoto: justRefreshPhotoBase64, 
                     hairstylePhoto: hairstylePhotoBase64,
                     completed: false, // For admin to mark as done
                     timestamp: timestamp
