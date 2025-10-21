@@ -754,17 +754,17 @@
     <script>
         // Data for services, acting as a single source of truth for prices and categories
         const servicesData = [
-            // Curly Cuts (New Category)
-            { category: 'Curly Cuts', name: 'Dry Cut', price: 200, type: 'cut' },
-            { category: 'Curly Cuts', name: 'Wet Cut', price: 200, type: 'cut' },
-            { category: 'Curly Cuts', name: 'Wet أو Dry Cut بـ Just Refresh', price: 300, type: 'cut' },
+            // Curly Cuts (Dry Cut and Wet Cut are now 300 EGP)
+            { category: 'Curly Cuts', name: 'Dry Cut', price: 300, type: 'cut' }, // CHANGED
+            { category: 'Curly Cuts', name: 'Wet Cut', price: 300, type: 'cut' }, // CHANGED
+            { category: 'Curly Cuts', name: 'Wet أو Dry Cut بـ Just Refresh', price: 300, type: 'cut' }, // Unchanged from last request
 
-            // Hair Styling (Prices increased by 50 EGP)
-            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Ear Length Hair', price: 350, type: 'styling' }, // Was 300
-            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Shoulder Length Hair', price: 400, type: 'styling' }, // Was 350
-            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Mid Back Length Hair', price: 450, type: 'styling' }, // Was 400
-            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Long Hair', price: 600, type: 'styling' }, // Was 550
-            { category: 'Hair Styling', subCategory: 'coily hair', name: 'Afro / Coily / Kinky', price: 650, type: 'styling' }, // Was 600
+            // Hair Styling (Prices increased by 50 EGP from initial request)
+            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Ear Length Hair', price: 350, type: 'styling' },
+            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Shoulder Length Hair', price: 400, type: 'styling' },
+            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Mid Back Length Hair', price: 450, type: 'styling' },
+            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Long Hair', price: 600, type: 'styling' },
+            { category: 'Hair Styling', subCategory: 'coily hair', name: 'Afro / Coily / Kinky', price: 650, type: 'styling' },
             
             // Hairstyles (Unchanged)
             { category: 'Hairstyles', name: 'Custom Hairstyle', price: '200-700', type: 'hairstyle' }
@@ -952,7 +952,7 @@
                 <p><strong>Time:</strong> ${time}</p>
                 <p><strong>Services:</strong></p>
                 <ul>
-                    ${booking.services.map(service => `<li>${service.name} - ${service.price} EGP</li>`).join('')}
+                    ${booking.services.map(service => `<li>${service.name} - ${typeof service.price === 'number' ? service.price : service.price.split('-')[0]} EGP</li>`).join('')}
                 </ul>
                 <p><strong>Total Price:</strong> ${booking.totalPrice} EGP</p>
                 <p><strong>Required Deposit:</strong> ${booking.deposit} EGP</p>
@@ -1094,10 +1094,11 @@
                             html += `<h4>- ${subOrServiceName}</h4>`;
                         }
                         groupedServices[category][subOrServiceName].forEach(service => {
+                            const priceDisplay = typeof service.price === 'number' ? service.price + ' EGP' : service.price + ' EGP';
                             html += `
                                 <div class="service">
                                     <span>${service.name}</span>
-                                    <span>${typeof service.price === 'number' ? service.price + ' EGP' : service.price + ' EGP'}</span>
+                                    <span>${priceDisplay}</span>
                                 </div>
                             `;
                         });
@@ -1135,12 +1136,13 @@
                             html += `<h4>- ${subOrServiceName}</h4>`;
                         }
                         groupedServices[category][subOrServiceName].forEach(service => {
-                            const priceText = typeof service.price === 'number' ? service.price : service.price.split('-')[0]; // Use minimum price for the data-price attribute for calculation
+                            const priceDisplay = typeof service.price === 'number' ? service.price + ' EGP' : service.price + ' EGP';
+                            const priceValue = typeof service.price === 'number' ? service.price : service.price.split('-')[0]; // Use minimum price for the data-price attribute for calculation
                             html += `
-                                <div class="service" data-name="${service.name}" data-price="${priceText}" data-type="${service.type}" onclick="toggleServiceSelection(this)">
+                                <div class="service" data-name="${service.name}" data-price="${priceValue}" data-type="${service.type}" onclick="toggleServiceSelection(this)">
                                     <div class="service-info">
                                         <span>${service.name}</span>
-                                        <span class="price">${typeof service.price === 'number' ? service.price + ' EGP' : service.price + ' EGP'}</span>
+                                        <span class="price">${priceDisplay}</span>
                                     </div>
                                 </div>
                             `;
@@ -1177,8 +1179,7 @@
             const justRefreshSelected = booking.services.some(s => s.name === 'Wet أو Dry Cut بـ Just Refresh');
             const hairstyleSelected = booking.services.some(s => s.type === 'hairstyle');
             
-            // Only show one cut inspiration upload if multiple cuts are selected, or none if no cut is selected.
-            // For simplicity, we'll check each specific cut service.
+            // Only show the specific cut upload if that service is selected
             dryCutUpload.classList.toggle('hidden', !dryCutSelected);
             wetCutUpload.classList.toggle('hidden', !wetCutSelected);
             justRefreshUpload.classList.toggle('hidden', !justRefreshSelected);
@@ -1503,5 +1504,4 @@
     </script>
 
 </body>
-                            </html>
-
+    </html>
