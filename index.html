@@ -590,22 +590,22 @@
                     <input type="file" id="payment-proof" name="payment_proof" accept="image/*" required>
                     
                     <div id="dry-cut-upload" class="inspiration-upload hidden">
-                        <label>Upload inspiration photo for your Dry Cut:</label>
+                        <label>Upload inspiration photo for Dry Cut:</label>
                         <input type="file" id="dry-cut-photo" name="dry_cut_photo" accept="image/*" required>
                     </div>
 
                     <div id="wet-cut-upload" class="inspiration-upload hidden">
-                        <label>Upload inspiration photo for your Wet Cut:</label>
+                        <label>Upload inspiration photo for Wet Cut:</label>
                         <input type="file" id="wet-cut-photo" name="wet_cut_photo" accept="image/*" required>
                     </div>
 
                     <div id="just-refresh-upload" class="inspiration-upload hidden">
-                        <label>Upload inspiration photo for your Just Refresh Cut:</label>
+                        <label>Upload inspiration photo for Just Refresh Cut:</label>
                         <input type="file" id="just-refresh-photo" name="just_refresh_photo" accept="image/*" required>
                     </div>
                     
                     <div id="hairstyle-upload" class="inspiration-upload hidden">
-                        <label>Upload inspiration photo for your Hairstyle:</label>
+                        <label>Upload inspiration photo for Hairstyle:</label>
                         <input type="file" id="hairstyle-photo" name="hairstyle_photo" accept="image/*" required>
                     </div>
                     
@@ -754,17 +754,17 @@
     <script>
         // Data for services, acting as a single source of truth for prices and categories
         const servicesData = [
-            // Curly Cuts (Dry Cut and Wet Cut are now 200 EGP)
-            { category: 'Curly Cuts', name: 'Dry Cut', price: 200, type: 'cut' }, // CHANGED to 200
-            { category: 'Curly Cuts', name: 'Wet Cut', price: 200, type: 'cut' }, // CHANGED to 200
-            { category: 'Curly Cuts', name: 'Wet أو Dry Cut بـ Just Refresh', price: 300, type: 'cut' }, // Unchanged
+            // Curly Cuts 
+            { category: 'Curly Cuts', name: 'Dry Cut', price: 200, type: 'cut' }, 
+            { category: 'Curly Cuts', name: 'Wet Cut', price: 200, type: 'cut' }, 
+            { category: 'Curly Cuts', name: 'Refresh Cut (Wet/Dry)', price: 300, type: 'cut' }, 
 
             // Hair Styling (Prices increased by 50 EGP from initial request)
-            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Ear Length Hair', price: 350, type: 'styling' },
-            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Shoulder Length Hair', price: 400, type: 'styling' },
-            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Mid Back Length Hair', price: 450, type: 'styling' },
-            { category: 'Hair Styling', subCategory: 'curly and wavy hair', name: 'Long Hair', price: 600, type: 'styling' },
-            { category: 'Hair Styling', subCategory: 'coily hair', name: 'Afro / Coily / Kinky', price: 650, type: 'styling' },
+            { category: 'Hair Styling', subCategory: 'Curly & Wavy Hair', name: 'Ear Length Hair', price: 350, type: 'styling' },
+            { category: 'Hair Styling', subCategory: 'Curly & Wavy Hair', name: 'Shoulder Length Hair', price: 400, type: 'styling' },
+            { category: 'Hair Styling', subCategory: 'Curly & Wavy Hair', name: 'Mid Back Length Hair', price: 450, type: 'styling' },
+            { category: 'Hair Styling', subCategory: 'Curly & Wavy Hair', name: 'Long Hair', price: 600, type: 'styling' },
+            { category: 'Hair Styling', subCategory: 'Coily Hair', name: 'Afro / Coily / Kinky', price: 650, type: 'styling' },
             
             // Hairstyles (Unchanged)
             { category: 'Hairstyles', name: 'Custom Hairstyle', price: '200-700', type: 'hairstyle' }
@@ -841,7 +841,7 @@
 
         // --- Local Storage Management ---
         function saveAdminData() {
-            // ** هذا السطر يقوم بحفظ البيانات. تأكد أن المتصفح يسمح بالحفظ **
+            // ** This line saves the data. Ensure the browser allows saving. **
             localStorage.setItem('adminData', JSON.stringify(adminData));
             loadAvailableTimeSlotsForClient();
             console.log("Data saved to localStorage:", adminData);
@@ -921,7 +921,6 @@
             }
 
             // Check for inspiration photos if required
-            // Check for inspiration photos for cuts
             const dryCutSelected = booking.services.some(s => s.name === 'Dry Cut');
             if (dryCutSelected && !document.getElementById('dry-cut-photo').files[0]) {
                 alert('Please upload an inspiration photo for your Dry Cut.');
@@ -932,9 +931,9 @@
                 alert('Please upload an inspiration photo for your Wet Cut.');
                 return;
             }
-            const justRefreshSelected = booking.services.some(s => s.name === 'Wet أو Dry Cut بـ Just Refresh');
+            const justRefreshSelected = booking.services.some(s => s.name === 'Refresh Cut (Wet/Dry)');
             if (justRefreshSelected && !document.getElementById('just-refresh-photo').files[0]) {
-                alert('Please upload an inspiration photo for your Just Refresh Cut.');
+                alert('Please upload an inspiration photo for your Refresh Cut.');
                 return;
             }
 
@@ -979,7 +978,6 @@
             const timestamp = new Date().toISOString();
 
             // Store inspiration photos as Base64 strings to be saved in localStorage
-            const reader = new FileReader();
             let paymentProofBase64 = '';
             let dryCutPhotoBase64 = '';
             let wetCutPhotoBase64 = ''; 
@@ -1088,9 +1086,9 @@
                 html += `<h3>${category}</h3>`;
                 for (const subOrServiceName in groupedServices[category]) {
                     if (Array.isArray(groupedServices[category][subOrServiceName])) {
-                        if (category === 'Hair Styling' && subOrServiceName !== 'curly and wavy hair' && subOrServiceName !== 'coily hair') {
+                        if (category === 'Hair Styling' && subOrServiceName !== 'Curly & Wavy Hair' && subOrServiceName !== 'Coily Hair') {
                             // Skip SubCategory title if it's the main category for cuts/hairstyles
-                        } else if (subOrServiceName !== 'Dry Cut' && subOrServiceName !== 'Wet Cut' && subOrServiceName !== 'Wet أو Dry Cut بـ Just Refresh' && subOrServiceName !== 'Custom Hairstyle') {
+                        } else if (subOrServiceName !== 'Dry Cut' && subOrServiceName !== 'Wet Cut' && subOrServiceName !== 'Refresh Cut (Wet/Dry)' && subOrServiceName !== 'Custom Hairstyle') {
                             html += `<h4>- ${subOrServiceName}</h4>`;
                         }
                         groupedServices[category][subOrServiceName].forEach(service => {
@@ -1130,9 +1128,9 @@
                 html += `<h3>${category}</h3>`;
                 for (const subOrServiceName in groupedServices[category]) {
                     if (Array.isArray(groupedServices[category][subOrServiceName])) {
-                        if (category === 'Hair Styling' && subOrServiceName !== 'curly and wavy hair' && subOrServiceName !== 'coily hair') {
+                        if (category === 'Hair Styling' && subOrServiceName !== 'Curly & Wavy Hair' && subOrServiceName !== 'Coily Hair') {
                             // Skip SubCategory title if it's the main category for cuts/hairstyles
-                        } else if (subOrServiceName !== 'Dry Cut' && subOrServiceName !== 'Wet Cut' && subOrServiceName !== 'Wet أو Dry Cut بـ Just Refresh' && subOrServiceName !== 'Custom Hairstyle') {
+                        } else if (subOrServiceName !== 'Dry Cut' && subOrServiceName !== 'Wet Cut' && subOrServiceName !== 'Refresh Cut (Wet/Dry)' && subOrServiceName !== 'Custom Hairstyle') {
                             html += `<h4>- ${subOrServiceName}</h4>`;
                         }
                         groupedServices[category][subOrServiceName].forEach(service => {
@@ -1176,7 +1174,7 @@
             
             const dryCutSelected = booking.services.some(s => s.name === 'Dry Cut');
             const wetCutSelected = booking.services.some(s => s.name === 'Wet Cut');
-            const justRefreshSelected = booking.services.some(s => s.name === 'Wet أو Dry Cut بـ Just Refresh');
+            const justRefreshSelected = booking.services.some(s => s.name === 'Refresh Cut (Wet/Dry)');
             const hairstyleSelected = booking.services.some(s => s.type === 'hairstyle');
             
             // Only show the specific cut upload if that service is selected
@@ -1481,7 +1479,7 @@
 
             if (app.justRefreshPhoto) {
                 detailsHTML += `
-                    <h4>Just Refresh Cut Inspiration:</h4>
+                    <h4>Refresh Cut Inspiration:</h4>
                     <a href="${app.justRefreshPhoto}" target="_blank"><img src="${app.justRefreshPhoto}" style="max-width: 100%; border: 1px solid var(--gray); border-radius: 5px;"></a>
                 `;
             }
