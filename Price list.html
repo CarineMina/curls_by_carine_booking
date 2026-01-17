@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Curls by Carine | Price List</title>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 30px;
+        color: #000;
+    }
+
+    .container {
+        max-width: 620px;
+        margin: auto;
+        border-left: 2px solid #d4af37;
+        border-right: 2px solid #d4af37;
+        padding: 25px;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    .logo {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .logo img {
+        max-width: 140px;
+    }
+
+    h1 {
+        font-size: 26px;
+        margin-bottom: 30px;
+        text-align: center;
+        letter-spacing: 1px;
+    }
+
+    h2 {
+        font-size: 22px;
+        margin-top: 40px;
+        margin-bottom: 6px;
+    }
+
+    h3 {
+        font-size: 17px;
+        margin: 20px 0 12px;
+    }
+
+    .duration {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 15px;
+    }
+
+    .service-box {
+        border: 1.5px solid #d4af37;
+        border-radius: 12px;
+        padding: 16px 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+        animation: slideUp 0.6s ease forwards;
+    }
+
+    .service-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .service-name {
+        font-size: 16px;
+    }
+
+    .price {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .price-note {
+        margin-top: 45px;
+        font-size: 14px;
+        color: #555;
+        text-align: center;
+        font-style: italic;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LOGO -->
+    <div class="logo">
+        <img src="logo.png" alt="Curls by Carine Logo">
+    </div>
+
+    <h1>Our Services</h1>
+
+    <!-- Curly Cuts -->
+    <h2>Curly Cuts</h2>
+    <div class="duration">0.5–1.5 hours</div>
+
+    <div class="service-box">
+        <div class="service-name">Dry Cut</div>
+        <div class="price">300 EGP</div>
+    </div>
+
+    <div class="service-box">
+        <div class="service-name">Wet Cut</div>
+        <div class="price">300 EGP</div>
+    </div>
+
+    <div class="service-box">
+        <div class="service-name">Wet/Dry Cut + Refresh</div>
+        <div class="price">400 EGP</div>
+    </div>
+
+    <!-- Hair Styling -->
+    <h2>Hair Styling</h2>
+    <div class="duration">1.5–3 hours</div>
+
+    <h3>– Curly & Wavy Hair</h3>
+
+    <div class="service-box">
+        <div class="service-name">Ear Length Hair</div>
+        <div class="price">350 EGP</div>
+    </div>
+
+    <div class="service-box">
+        <div class="service-name">Shoulder Length Hair</div>
+        <div class="price">400 EGP</div>
+    </div>
+
+    <div class="service-box">
+        <div class="service-name">Mid Back Length Hair</div>
+        <div class="price">450 EGP</div>
+    </div>
+
+    <div class="service-box">
+        <div class="service-name">Long Hair</div>
+        <div class="price">600 EGP</div>
+    </div>
+
+    <h3>– Coily Hair</h3>
+
+    <div class="service-box">
+        <div class="service-name">Afro / Coily / Kinky</div>
+        <div class="price">650 EGP</div>
+    </div>
+
+    <!-- Hairstyles -->
+    <h2>Hairstyles</h2>
+
+    <div class="service-box">
+        <div class="service-name">Custom Hairstyle</div>
+        <div class="price">200–700 EGP</div>
+    </div>
+
+    <div class="price-note">
+        For thick or very dense hair, an additional 100 EGP may apply.
+    </div>
+
+</div>
+
+</body>
+</html>
